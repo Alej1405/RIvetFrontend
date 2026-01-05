@@ -1,0 +1,11 @@
+@import url("https://use.typekit.net/cjy3wka.css");
+@import "tailwindcss";
+
+@theme {
+    --font-noto: "Noto Sans", sans-serif;
+    --font-noto-light: "Noto Sans Thin", sans-serif;
+    --font-noto-bold: "Noto Sans Bold", sans-serif;
+    --font-heveltica-light: "helvetica-lt-pro", sans-serif;
+    --font-heveltica-bold: "helvetica-lt-pro", sans-serif;
+    --font-mundial: "mundial", sans-serif;
+}   
