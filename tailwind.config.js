@@ -10,6 +10,7 @@ module.exports = {
             colors:{
                 bgRivet: '#24262A',
                 ftMasha: '#171B29',
+                border: 'hsl(var(--border))',
             },
         },
     },
