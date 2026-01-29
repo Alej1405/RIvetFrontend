@@ -16,8 +16,6 @@ All colors MUST be HSL.
 
 @layer base {
 :root {
-    --background: 220 20% 10%;
-    --foreground: 0 0% 100%;
 
     --card: 220 15% 15%;
     --card-foreground: 0 0% 100%;
@@ -100,10 +98,3 @@ All colors MUST be HSL.
   }
 }
 
-@layer base {
-  
-
-  body {
-    @apply bg-background text-foreground;
-  }
-}
