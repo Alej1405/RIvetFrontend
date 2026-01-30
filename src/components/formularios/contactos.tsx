@@ -87,7 +87,7 @@ export default function Contactos() {
                 <div className=" mt-12 w-full flex flex-row space-x-12 justify-center">
                     <button
                         type="submit"
-                        className="bg-[url('/bg_fotter.svg')] px-12 bg-cover  rounded-full py-2 text-white text-sm text-center font-noto font-semibold tracking-wide cursor-pointer"
+                        className="bg-[url('/bg_botton.svg')] px-12 bg-cover  rounded-full py-2 text-white text-sm text-center font-noto font-semibold tracking-wide cursor-pointer"
                     >
                         Enviar
                     </button>

@@ -46,7 +46,9 @@ export default function Header() {
             <div>
                 <NavLink
                 to='/'>
-                    <img src="logo_blanco.svg" alt="Logo Rivet" className="p-2"/>
+                    <div className="w-10%">
+                        <img src="rivet_logo_editable.png" alt="Logo Rivet" className="p-2 w-10%"/>
+                    </div>
                 </NavLink>
             </div>                       
                 <nav

@@ -17,7 +17,7 @@ export default function Mision( {imagen, alt, mision}:BannerMisionProps) {
                 <p className="wrap-break-word md:text-[20px] font-extralight text-pretty tracking-[.20em] leading-relaxed md:line-clamp-4">
                     {mision}
                 </p>
-                <div className="bg-[url('/bg_fotter.svg')] bg-cover  rounded-full p-4 mt-10 text-white text-sm text-center font-noto font-semibold tracking-wide w-1/2 m-auto">
+                <div className="bg-[url('/bg_botton.svg')] bg-cover  rounded-full p-4 mt-10 text-white text-sm text-center font-noto font-semibold tracking-wide w-1/2 m-auto">
                     Trabaja con Nosotros
                 </div>
             </div>

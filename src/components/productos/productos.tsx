@@ -57,15 +57,15 @@ export default function Productos({ id, nombre, insing, seo,  detalle, prod_img,
                     />
                 </motion.svg>
                 <div className="md:mx-6">
-                    <h3 className="font-bold text-right">{nombre}</h3>
-                    <p className="font-mundial font-extralight">
+                    <h3 className="font-bold text-white text-right">{nombre}</h3>
+                    <p className="font-mundial text-[#AFAEAE] font-extralight">
                         {insing} {espacio}
                         <span className="font-bold">{seo}</span>
                     </p>
                 </div>
             </motion.div>
             <div className="md:block hidden">
-                <p className="font-light  text-[16px] wrap-break-words w-full">
+                <p className="font-light text-[#AFAEAE] text-[16px] wrap-break-words w-full">
                     {detalle ?? "Sin Detalle"}
                 </p>
             </div>
@@ -73,7 +73,7 @@ export default function Productos({ id, nombre, insing, seo,  detalle, prod_img,
                 type="button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-linear-to-r from-primary to-accent hidden md:block rounded-full py-4 mt-10  text-sm text-center font-semibold tracking-wide w-[90%] cursor-pointer"
+                className="bg-[url('/bg_botton.svg')] bg-cover md:block w-[80%] mx-auto hidden  rounded-full py-3 mt-10 text-white text-sm text-center font-noto font-semibold tracking-wide"
                 onClick={() => selectProduct(id)}
             >
             Ver o Comprar
@@ -126,10 +126,10 @@ export default function Productos({ id, nombre, insing, seo,  detalle, prod_img,
                 type="button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-linear-to-r from-primary to-accent block w-[80%] mx-auto md:hidden rounded-full py-3 mt-10 text-primary-foreground text-sm text-center font-semibold tracking-wide"
+                className="bg-[url('/bg_botton.svg')] bg-cover block w-[80%] mx-auto md:hidden rounded-full py-3 mt-10 text-white text-sm text-center font-noto font-semibold tracking-wide"
                 onClick={() => selectProduct(id)}
             >
-            Ver o Comprar
+                Ver o Comprar
             </motion.button>
         </motion.div>
         </motion.div>

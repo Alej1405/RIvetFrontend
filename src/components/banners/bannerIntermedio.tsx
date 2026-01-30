@@ -9,7 +9,7 @@ export default function Intermedio({imagen}: BannerIntermedioProps) {
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 style={{ 
                     backgroundImage: `url(${imagen})`, 
-                    opacity: 0.5 }}>
+                    opacity: 0.7 }}>
             </div>
 
             <div className="relative z-10 md:h-full flex flex-col md:items-strat md:justify-start md:mx-20">
@@ -17,7 +17,7 @@ export default function Intermedio({imagen}: BannerIntermedioProps) {
                     <img className="w-1/2" src="logo_blanco.svg" alt="Logo de rivet" />
                 </div>
                 <div className="mt-6">
-                    <h4 className="uppercase font-extrabold text-white md:text-3xl text-2xl font-heveltica-bold tracking-widest">
+                    <h4 className="uppercase font-extrabold text-[#E8E756] md:text-3xl text-2xl font-heveltica-bold tracking-widest">
                         una empresa con mision social
                     </h4>
                 </div>

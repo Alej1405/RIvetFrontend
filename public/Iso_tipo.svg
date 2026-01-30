@@ -1,3 +1,29 @@
-<svg id="Iso_tipo" xmlns="http://www.w3.org/2000/svg" width="46.43" height="45" viewBox="0 0 46.43 45">
-  <path id="Trazado_64" data-name="Trazado 64" d="M77.689,526.02H40.241a4.491,4.491,0,0,0-4.491,4.491v36.017a4.491,4.491,0,0,0,4.491,4.491H77.689a4.491,4.491,0,0,0,4.491-4.491V530.511A4.491,4.491,0,0,0,77.689,526.02ZM76.4,563.827H67.587L53.642,551.485v-3.647H67.106v-8.9H50.2v24.884H42.943V533.213h28.65a2.633,2.633,0,0,1,2.725,2.885v14.065a2.589,2.589,0,0,1-2.725,2.805H63.9l12.5,10.578v.281Z" transform="translate(-35.75 -526.02)" fill="#fff"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Adobe Illustrator 24.2.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="44.69px" height="56.88px" viewBox="0 0 44.69 56.88" style="enable-background:new 0 0 44.69 56.88;" xml:space="preserve"
+	>
+<style type="text/css">
+	.st0{fill:#D1D3D4;}
+	.st1{fill:#E8E857;}
+	.st2{fill:#00B6C9;}
+	.st3{fill:#FFFFFF;}
+	.st4{fill:none;stroke:#00B6C9;stroke-width:1.1504;stroke-miterlimit:10;}
+	.st5{fill:none;stroke:#00B6C9;stroke-width:0.7706;stroke-miterlimit:10;}
+	.st6{fill:none;stroke:#00B6C9;stroke-width:0.3897;stroke-miterlimit:10;}
+	.st7{fill:none;stroke:#00B6C9;stroke-miterlimit:10;}
+	.st8{fill:none;stroke:#D1D3D4;stroke-miterlimit:10;}
+	.st9{fill:url(#SVGID_1_);}
+	.st10{fill:url(#SVGID_2_);}
+</style>
+<g>
+	<path class="st3" d="M30.23,14.38v0.07h-0.02C30.22,14.43,30.22,14.41,30.23,14.38z"/>
+	<path class="st3" d="M43.69,55.72l0.15,1.16H29.25c0-0.04-0.01-0.08-0.02-0.12c-1.55-6.74-6.65-12.12-13.22-14.11
+		c-1.09-0.33-2.23-0.45-3.37-0.45H0V27.73h12.35c0.06,0.01,2.04,0.02,2.1,0.02c9.98,1.17,18.63,6.71,23.98,14.66
+		C41.07,46.34,42.9,50.86,43.69,55.72z"/>
+	<path class="st3" d="M44.69,0v7.54c-0.01,0.06-0.02,7.04-0.02,7.11c-0.86,7.34-4.08,13.96-8.89,19.07
+		c-3.84-3.4-8.49-5.88-13.62-7.13c4.08-2.78,7.04-7.11,8.05-12.13h0.02v-0.07c-0.01,0.02-0.01,0.05-0.02,0.07H1.31
+		c0-3.99,1.62-7.61,4.24-10.22C8.16,1.62,11.77,0,15.76,0H44.69z"/>
+	<path class="st3" d="M30.23,14.38v0.07h-0.02C30.22,14.43,30.22,14.41,30.23,14.38z"/>
+</g>
 </svg>
