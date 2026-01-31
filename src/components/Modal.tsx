@@ -1,6 +1,9 @@
 import { Dialog, Transition, TransitionChild, DialogPanel, DialogTitle } from '@headlessui/react';
 import { Fragment } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, ShoppingCart, Package } from 'lucide-react';
 import { useAppStore } from '../stores/useAppStore';
+import ImageCarousel  from '../components/modal/imagenes';
 
 export default function Modal() {
     //controlando el modal apertura
@@ -10,7 +13,46 @@ export default function Modal() {
     //mostrar la informacion de cada producto
     const productoDetalle = useAppStore((state) => state.selectProducto)
 
+    //variables del sistema que controlan la opacidad del modal
+    const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+            delayChildren: 0.2,
+        },
+        },
+    };
 
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+        opacity: 1,
+        y: 0,
+        transition: { type: "spring" as const, stiffness: 300, damping: 24 },
+        },
+    };
+
+    const cardVariants = {
+        hidden: { opacity: 0, x: -30, scale: 0.95 },
+        visible: (i: number) => ({
+        opacity: 1,
+        x: 0,
+        scale: 1,
+        transition: {
+            delay: i * 0.15,
+            type: "spring" as const,
+            stiffness: 260,
+            damping: 20,
+        },
+        }),
+        hover: {
+        scale: 1.02,
+        y: -5,
+        transition: { type: "spring" as const, stiffness: 400, damping: 25 },
+        },
+    };
 
     return (
         <>
@@ -18,13 +60,13 @@ export default function Modal() {
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
                     {/* Fondo oscuro con transición */}
                     <TransitionChild
-                    as={Fragment}
-                    enter="transition-opacity duration-500 ease-out"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity duration-400 ease-in"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
+                        as={Fragment}
+                        enter="transition-opacity duration-500 ease-out"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity duration-400 ease-in"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
                     >
                     <div className="fixed inset-0 backdrop-blur-md bg-opacity-70 overflow-y-scroll" />
                     </TransitionChild>
@@ -41,90 +83,137 @@ export default function Modal() {
                                 leaveTo="opacity-0 scale-90 translate-y-4"
                             >
                                 <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white/40 backdrop-blur-md  px-6 py-8 text-left shadow-xl transition-all sm:max-w-2xl w-full">
-
-                                    <button
+                                    {/* orbes decorados con gradientes */}
+                                    <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+                                    <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-accent/20 rounded-full blur-3xl pointer-events-none" />
+                                    {/* boton que cierra el modal */}
+                                    <motion.button
                                         onClick={closeModal}
-                                        className="absolute top-4 right-4 text-gray-700 hover:text-red-600 text-2xl font-bold transition"
+                                        className="absolute top-4 right-4 z-10 p-2 rounded-full bg-card/60 backdrop-blur-sm border border-border/50 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                        whileHover={{ scale: 1.1, rotate: 90 }}
+                                        whileTap={{ scale: 0.9 }}
                                         aria-label="Cerrar modal"
                                     >
-                                        &times;
-                                    </button>
+                                        <X className="w-5 h-5" />
+                                    </motion.button>
 
-                                    <DialogTitle className="text-gray-900 text-4xl font-extrabold mb-6 text-center">
-                                        {productoDetalle.data.nombre ?? ""}
-                                    </DialogTitle>
-
-                                    <div className="rounded-lg flex flex-row overflow-x-auto gap-4 justify-center">
-                                        {productoDetalle.imagenes.length > 0 && (
-                                            <div
-                                            className="shrink-0 w-[70vw] sm:w-[40vw] md:w-[30vw] lg:w-[20vw] h-auto flex justify-center items-center overflow-hidden"
+                                    <motion.div
+                                    variants={containerVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    >
+                                    {/* Title */}
+                                        <motion.div variants={itemVariants}>
+                                            <DialogTitle className="text-foreground text-3xl md:text-4xl font-bold mb-6 text-center">
+                                            <motion.span
+                                                initial={{ opacity: 0, y: -20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 0.1, type: "spring" }}
+                                                className="inline-block"
                                             >
-                                            <img
-                                                src={productoDetalle.imagenes[productoDetalle.imagenes.length - 1].nombre}
-                                                alt="Última imagen del producto"
-                                                className="w-full h-auto object-contain rounded-md hover:scale-120 hover:transition-all"
-                                            />
-                                            </div>
-                                        )}
-                                    </div>
+                                                {productoDetalle.data.nombre ?? ""}
+                                            </motion.span>
+                                            </DialogTitle>
+                                        </motion.div>
 
-                                    <DialogTitle className="text-gray-900 text-2xl font-extrabold mb-4 mt-6">
-                                        Presentaciones de {productoDetalle.data.nombre ?? ""}
-                                    </DialogTitle>
+                                    {/* Carousel de imagenes */}
+                                        <motion.div variants={itemVariants} className="mb-8">
+                                            <ImageCarousel imagenes={productoDetalle.imagenes} />
+                                        </motion.div>
 
-                                    <div className="flex flex-col gap-6">
-                                        {productoDetalle.presentacion.map((present) => (
-                                            <div
+                                    {/* Presentaciones section */}
+                                        <motion.div variants={itemVariants}>
+                                            <DialogTitle className="text-foreground text-xl md:text-2xl font-bold mb-4 flex items-center gap-2">
+                                            <Package className="w-6 h-6 text-primary" />
+                                            Presentaciones de {productoDetalle.data.nombre ?? ""}
+                                            </DialogTitle>
+                                        </motion.div>
+                                    {/* presentaciones de tarjetas */}
+                                        <div className="flex flex-col gap-6">
+                                            <AnimatePresence>
+                                            {productoDetalle.presentacion.map((present, index) => (
+                                                <motion.div
                                                 key={present.id}
-                                                className="rounded-lg shadow-md p-6 bg-white/15 backdrop-blur-md flex flex-col  items-start"
-                                            >
-                                                <div className="flex flex-col gap-2">
-                                                    <h2 className="text-xl font-semibold text-gray-800">
-                                                        {present.nombre}
-                                                    </h2>
-                                                    <div className=" flex flex-direction-row">
-                                                        <div>
-                                                            <img src={present.imagen_presentacion ?? "Sin imagen"} alt={present.nombre} />
-                                                        </div>
-                                                    </div>
-                                                    <h3 className="uppercase font-extrabold font-heveltica-light tracking-[.3em]">
-                                                        Tipo de Envase o Botella:
-                                                    </h3>
-                                                    <p className="text-gray-600 ml-6 my-5">
-                                                        Envase: {present.producto_envases_id ?? "Sin envase"}
-                                                    </p>
-                                                </div>
-
-                                                <form
-                                                    className="mt-4 w-full flex flex-col md:flex-row items-center gap-4"
+                                                custom={index}
+                                                variants={cardVariants}
+                                                initial="hidden"
+                                                animate="visible"
+                                                whileHover="hover"
+                                                className="rounded-xl p-5 bg-card/30 backdrop-blur-md border border-border/40 shadow-lg"
                                                 >
-                                                    <div className="space-y-3">
-                                                        <div className="flex flex-col md:w-24 items-center justify-center">
-                                                            <label htmlFor="cantidad" className="uppercase font-bold font-heveltica-bold tracking-[3px]">
-                                                                Cantidad
-                                                            </label>
-                                                            <input
+                                                <div className="flex flex-col md:flex-row gap-4">
+                                                    {/* Image */}
+                                                    {present.imagen_presentacion && (
+                                                        <motion.div
+                                                            className="shrink-0"
+                                                            whileHover={{ scale: 1.05 }}
+                                                            transition={{ type: "spring", stiffness: 300 }}
+                                                        >
+                                                            <img
+                                                            src={present.imagen_presentacion}
+                                                            alt={present.nombre}
+                                                            className="w-24 h-24 object-cover rounded-lg shadow-md"
+                                                            />
+                                                        </motion.div>
+                                                    )}
+
+                                                    {/* Contentenido */}
+                                                        <div className="flex-1 space-y-2">
+                                                        <motion.h2
+                                                            className="text-lg font-semibold text-foreground"
+                                                            initial={{ opacity: 0 }}
+                                                            animate={{ opacity: 1 }}
+                                                            transition={{ delay: 0.2 + index * 0.1 }}
+                                                        >
+                                                            {present.nombre}
+                                                        </motion.h2>
+
+                                                        <div className="space-y-1">
+                                                            <h3 className="text-xs uppercase font-bold tracking-widest text-muted-foreground">
+                                                            Tipo de Envase o Botella:
+                                                            </h3>
+                                                            <p className="text-sm text-foreground/80 pl-2">
+                                                            {present.producto_envases_id ?? "Sin envase"}
+                                                            </p>
+                                                        </div>
+                                                        </div>
+
+                                                    {/* Formulario de cada presentacion */}
+                                                        <form className="flex flex-col items-center gap-3 mt-4 md:mt-0">
+                                                            <div className="flex flex-col items-center">
+                                                                <label
+                                                                htmlFor={`cantidad-${present.id}`}
+                                                                className="text-xs uppercase font-bold tracking-widest text-muted-foreground mb-1"
+                                                                >
+                                                                    Cantidad
+                                                                </label>
+                                                                <motion.input
+                                                                whileFocus={{ scale: 1.05 }}
                                                                 type="number"
-                                                                id="cantidad"
+                                                                id={`cantidad-${present.id}`}
                                                                 name={`cantidad-${present.id}`}
                                                                 min="1"
                                                                 defaultValue="1"
-                                                                placeholder="Cantidad"
-                                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+                                                                className="w-20 px-3 py-2 text-center border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/80 backdrop-blur-sm text-foreground"
                                                                 required
-                                                            />
-                                                        </div>
-                                                        <button
-                                                            type="submit"
-                                                            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition bottom-0"
-                                                        >
-                                                        Agregar al carrito
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        ))}
-                                    </div>
+                                                                />
+                                                            </div>
+                                                            <motion.button
+                                                                type="submit"
+                                                                whileHover={{ scale: 1.05 }}
+                                                                whileTap={{ scale: 0.95 }}
+                                                                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
+                                                            >
+                                                                <ShoppingCart className="w-4 h-4" />
+                                                                    Agregar
+                                                            </motion.button>
+                                                        </form>
+                                                </div>
+                                                </motion.div>
+                                            ))}
+                                            </AnimatePresence>
+                                        </div>
+                                    </motion.div>
                                 </DialogPanel>
                             </TransitionChild>
                         </div>

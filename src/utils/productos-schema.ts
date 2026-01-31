@@ -57,3 +57,9 @@ export const ProductoDetalleAPIResponseSchema = z.object ({
         return val;
     }, z.array(ProductoPresentacionDetalle)).optional().default([])
 })
+
+//exportar los types para el ui 
+export type ProductoImagen = z.infer<typeof ProductoImagenDetalle>;
+export type ProductoPresentacion = z.infer<typeof ProductoPresentacionDetalle>;
+export type ProductoDetalle = z.infer<typeof ProductoDetalleData>;
+export type ProductoDetalleResponse = z.infer<typeof ProductoDetalleAPIResponseSchema>;
