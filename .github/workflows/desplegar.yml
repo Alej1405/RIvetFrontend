@@ -1,0 +1,202 @@
+# Despliegue continuo de Rivet Ecuador.
+#
+# Cada push a main valida, compila y publica el sitio en el hosting cPanel por SSH.
+# El servidor solo recibe el dist/ ya compilado: allá no hay Node ni npm.
+#
+# El hosting es una cuenta compartida (usuario `rivetecc`) que aloja otros 12 dominios,
+# entre ellos linkcargoecuador.com. Por eso el rsync apunta SIEMPRE a public_html y
+# nunca al home: un --delete sobre el home borraría los demás sitios.
+
+name: Desplegar
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Un despliegue a la vez: si llegan dos pushes seguidos, el viejo se cancela para
+# que no se pisen a mitad de la subida y dejen el sitio a medias.
+concurrency:
+  group: desplegar-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERSION_NODE: '22'
+  DOMINIO: rivet-ec.com
+  # Vite sustituye las VITE_* al compilar, no las lee al ejecutarse. Si falta una,
+  # el sitio se publica con `undefined` dentro y no hay arreglo sin recompilar.
+  # No son secretos: acaban dentro del bundle, que cualquiera puede leer.
+  VITE_API_URL: https://erp.mashaec.net/api
+  VITE_CMS_SLUG: rivet-ecuador-sas
+
+jobs:
+  validar:
+    name: Validar y compilar
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Traer el código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Preparar Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.VERSION_NODE }}
+          cache: npm
+
+      # npm ci instala exactamente lo del package-lock.json y falla si no coincide
+      # con package.json: nada de resolver versiones nuevas por su cuenta.
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Revisar el código
+        run: npm run lint
+
+      - name: Comprobar que el token llegó
+        env:
+          TOKEN: ${{ secrets.RIVET_CMS_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::Falta el secreto RIVET_CMS_TOKEN. Sin él el sitio compila igual, pero se publica sin un solo dato del ERP."
+            exit 1
+          fi
+          echo "El token del CMS tiene valor."
+
+      # `npm run build` es `tsc -b && vite build`: los errores de tipos paran aquí,
+      # antes de publicar.
+      - name: Compilar
+        env:
+          VITE_CMS_TOKEN: ${{ secrets.RIVET_CMS_TOKEN }}
+        run: npm run build
+
+      - name: Comprobar que el build sirve
+        run: |
+          test -f dist/index.html || { echo "::error::El build no generó index.html"; exit 1; }
+
+          # Sin .htaccess, Apache no reescribe las rutas: entrar directo a
+          # /nosotros o abrir el QR de un punto de venta devuelve 404. Viaja desde
+          # public/.htaccess — con punto, o Vite lo copia con un nombre que Apache ignora.
+          test -f dist/.htaccess || { echo "::error::Falta dist/.htaccess: las rutas internas darán 404"; exit 1; }
+
+          # Que compile no basta: sin VITE_API_URL el build pasa igual y el sitio
+          # queda sin datos. Se comprueba que la URL quedó dentro del bundle.
+          grep -rq "erp.mashaec.net" dist/assets/*.js \
+            || { echo "::error::El bundle no lleva la URL de la API: ¿falta VITE_API_URL?"; exit 1; }
+
+          # El logo y el isotipo los usan el header, el pie y la pantalla de carga.
+          for archivo in logo_blanco.svg Iso_tipo.svg favicon.svg; do
+            test -f "dist/$archivo" || { echo "::error::Falta dist/$archivo"; exit 1; }
+          done
+
+          echo "Peso del sitio: $(du -sh dist | cut -f1)"
+
+      - name: Guardar el resultado
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sitio
+          path: dist/
+          include-hidden-files: true   # sin esto el .htaccess no viaja
+          retention-days: 5
+
+  desplegar:
+    name: Publicar en el hosting
+    needs: validar
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # El trabajo que toca los secretos solo corre en un push directo a main de
+    # ESTE repositorio. Un pull request se queda en la validación.
+    if: >-
+      github.event_name != 'pull_request' &&
+      github.ref == 'refs/heads/main' &&
+      github.repository == 'Alej1405/RivetFrontend'
+
+    # Permite exigir aprobación manual desde Settings → Environments.
+    environment:
+      name: produccion
+      url: https://rivet-ec.com
+
+    steps:
+      - name: Recuperar el sitio compilado
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: sitio
+          path: dist
+
+      # Van comprobados aquí y no junto a los de compilación porque ese trabajo
+      # también corre en los pull requests, que no reciben secretos: allí estas
+      # comprobaciones fallarían siempre y por el motivo equivocado.
+      - name: Comprobar que los secretos del servidor llegaron
+        env:
+          SECRETOS: |
+            RIVET_HOST=${{ secrets.RIVET_HOST }}
+            RIVET_USUARIO=${{ secrets.RIVET_USUARIO }}
+            RIVET_KNOWN_HOSTS=${{ secrets.RIVET_KNOWN_HOSTS }}
+            RIVET_SSH_KEY=${{ secrets.RIVET_SSH_KEY }}
+        run: |
+          faltan=0
+          while IFS='=' read -r nombre valor; do
+            [ -z "$nombre" ] && continue
+            if [ -z "$valor" ]; then
+              echo "::error::Falta el secreto $nombre"
+              faltan=1
+            fi
+          done <<< "$SECRETOS"
+          [ "$faltan" -eq 0 ] \
+            || { echo "::error::Sin estos secretos el rsync falla con 'Permission denied', que parece un problema del servidor y no lo es."; exit 1; }
+          echo "Los 4 secretos del servidor tienen valor."
+
+      # La clave va a un archivo 600 porque ssh se niega a usar una que otros
+      # puedan leer. La huella del host se fija desde un secreto: así ssh corta
+      # si el servidor que responde no es el nuestro, en vez de confiar a ciegas.
+      #
+      # El secreto guarda la clave en base64, en una sola línea. Una clave OpenSSH
+      # ocupa varias y basta con que el copiar y pegar junte dos para que deje de
+      # ser válida: ssh falla con "error in libcrypto", que no dice nada de eso.
+      # En base64 no hay saltos que perder. Se genera con:
+      #   base64 < ~/.ssh/despliegue_linkcargo | pbcopy
+      - name: Preparar el acceso SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s' "${{ secrets.RIVET_SSH_KEY }}" | base64 -d > ~/.ssh/despliegue
+          chmod 600 ~/.ssh/despliegue
+          printf '%s\n' "${{ secrets.RIVET_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+          ssh-keygen -y -f ~/.ssh/despliegue > /dev/null \
+            || { echo "::error::RIVET_SSH_KEY no es una clave válida. Regenérala con: base64 < ~/.ssh/despliegue_linkcargo | pbcopy"; exit 1; }
+
+      # --delete deja el servidor idéntico al build, pero .well-known guarda el
+      # reto de Let's Encrypt: si se borra, la renovación del SSL falla. Va
+      # excluido, y rsync no borra lo excluido.
+      #
+      # --chmod fija permisos desde aquí en vez de heredar el umask del runner,
+      # para que Apache siempre pueda leer los archivos.
+      - name: Subir el sitio
+        env:
+          DESTINO: ${{ secrets.RIVET_USUARIO }}@${{ secrets.RIVET_HOST }}
+          PUERTO: ${{ secrets.RIVET_PUERTO }}
+        run: |
+          puerto="${PUERTO:-22}"
+          rsync -rlptz --delete --checksum --chmod=D755,F644 \
+            --exclude='.well-known' \
+            -e "ssh -i ~/.ssh/despliegue -p $puerto -o StrictHostKeyChecking=yes" \
+            dist/ "$DESTINO:public_html/"
+
+      - name: Comprobar que el sitio responde
+        run: |
+          codigo=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 25 "https://${{ env.DOMINIO }}")
+          echo "https://${{ env.DOMINIO }} respondió $codigo"
+          [ "$codigo" = "200" ] || { echo "::error::El sitio no responde 200 tras el despliegue"; exit 1; }
+
+          # Una SPA sirve el mismo index.html en cualquier ruta: si una interna
+          # devuelve 404, el .htaccess no llegó o Apache lo está ignorando.
+          interna=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 25 "https://${{ env.DOMINIO }}/nosotros")
+          echo "/nosotros respondió $interna"
+          [ "$interna" = "200" ] || { echo "::error::Las rutas internas dan $interna: revisa el .htaccess"; exit 1; }

@@ -1,8 +1,11 @@
 <div align="center">
 
-<!-- Logo de Mashacorp: cuando exista el archivo, va aquí.
-     <img src="public/mashacorp.svg" alt="Mashacorp" width="140">
-     Se deja fuera hasta tenerlo: una imagen rota se ve peor que ninguna. -->
+<!-- El logo va compuesto sobre el fondo de marca: el SVG original combina blanco
+     y gris claro, que sobre el tema claro de GitHub desaparecen. Vive en .github/
+     y no en public/ para que no viaje al hosting con el build. -->
+<img src=".github/rivet-logo.png" alt="Rivet Ecuador" width="300">
+
+<!-- Logo de Mashacorp: cuando exista el archivo, va aquí. -->
 
 # Rivet Ecuador
 
