@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Empaquetado del build: lo genera el despliegue, no se versiona.
+dist.tar.gz
+
+# Variables de entorno. `*.local` ya cubre .env.local, pero no estos.
+.env
+.env.production

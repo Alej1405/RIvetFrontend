@@ -1,0 +1,18 @@
+# Fallback SPA (Apache / LiteSpeed).
+# La app es una Single Page Application con React Router: rutas como
+# /puntos-venta/{slug} o /nosotros no existen como archivos en el servidor.
+# Sin esta regla, entrar directo o refrescar esas URLs (o abrir un link/QR
+# compartido de un punto de venta) devuelve 404. Aquí todo lo que no sea un
+# archivo o carpeta real se sirve como index.html y React Router resuelve la ruta.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # No tocar peticiones a archivos o carpetas que sí existen (assets, imágenes, etc.)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Todo lo demás -> index.html (la SPA se encarga del enrutado)
+  RewriteRule ^ index.html [L]
+</IfModule>

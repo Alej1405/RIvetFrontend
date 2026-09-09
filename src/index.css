@@ -1,100 +1,52 @@
-@import url("https://use.typekit.net/cjy3wka.css");
+/* El Typekit se carga vía <link> en index.html (no aquí: un @import en CSS
+   es render-blocking y duplicaba la descarga). */
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────────────────────
+   TOKENS RIVET — paleta del logo (idéntica a la web actual)
+   Teal #00B6C9 (primary) · Amarillo #E8E857 (accent) · teal-black
+────────────────────────────────────────────────────────────── */
 @theme {
-    --font-noto: "Noto Sans", sans-serif;
-    --font-noto-light: "Noto Sans Thin", sans-serif;
-    --font-noto-bold: "Noto Sans Bold", sans-serif;
-    --font-heveltica-light: "helvetica-lt-pro", sans-serif;
-    --font-heveltica-bold: "helvetica-lt-pro", sans-serif;
-    --font-mundial: "mundial", sans-serif;
-}   
+  --font-noto: "Noto Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-noto-light: "Noto Sans Thin", "Noto Sans", sans-serif;
+  --font-noto-bold: "Noto Sans Bold", "Noto Sans", sans-serif;
+  --font-heveltica: "helvetica-lt-pro", "Noto Sans", sans-serif;
+  --font-mundial: "mundial", "Noto Sans", sans-serif;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
-@layer base {
-:root {
-
-    --card: 220 15% 15%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 220 15% 12%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 142 70% 45%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 220 15% 20%;
-    --secondary-foreground: 0 0% 70%;
-
-    --muted: 220 10% 25%;
-    --muted-foreground: 0 0% 68%;
-
-    --accent: 142 70% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    /* --border: 220 10% 25%; */
-    --input: 220 10% 25%;
-    --ring: 142 70% 45%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 220 15% 12%;
-    --sidebar-foreground: 0 0% 85%;
-    --sidebar-primary: 142 70% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 18%;
-    --sidebar-accent-foreground: 0 0% 85%;
-    --sidebar-border: 220 10% 20%;
-    --sidebar-ring: 142 70% 45%;
-
-    /* Custom product card */
-    --product-card-bg: 0 0% 100% / 0.1;
-    --product-text-muted: 0 0% 68%;
-  }
-
-  .dark {
-    --background: 220 20% 6%;
-    --foreground: 0 0% 100%;
-
-    --card: 220 15% 10%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 220 15% 8%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 142 70% 45%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 220 15% 15%;
-    --secondary-foreground: 0 0% 70%;
-
-    --muted: 220 10% 20%;
-    --muted-foreground: 0 0% 68%;
-
-    --accent: 142 70% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 220 10% 20%;
-    --input: 220 10% 20%;
-    --ring: 142 70% 45%;
-    
-    --sidebar-background: 220 15% 8%;
-    --sidebar-foreground: 0 0% 85%;
-    --sidebar-primary: 142 70% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 12%;
-    --sidebar-accent-foreground: 0 0% 85%;
-    --sidebar-border: 220 10% 15%;
-    --sidebar-ring: 142 70% 45%;
-  }
+  --color-background: #07100f;
+  --color-foreground: #edf4f6;
+  --color-card: #0e1d1f;
+  --color-primary: #00b6c9;
+  --color-primary-foreground: #04191c;
+  --color-secondary: #112630;
+  --color-muted: #112630;
+  --color-muted-foreground: #6a9aaa;
+  --color-accent: #e8e857;
+  --color-accent-foreground: #07100f;
+  --color-border: #1a3540;
+  --color-ring: #00b6c9;
 }
 
+@layer base {
+  * {
+    border-color: var(--color-border);
+    outline-color: var(--color-ring);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    @apply font-noto antialiased;
+  }
+
+  ::-webkit-scrollbar { width: 7px; }
+  ::-webkit-scrollbar-track { background: var(--color-background); }
+  ::-webkit-scrollbar-thumb { background: var(--color-secondary); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+  ::selection { background: color-mix(in srgb, var(--color-primary) 32%, transparent); color: var(--color-foreground); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
