@@ -49,6 +49,14 @@ jobs:
           node-version: ${{ env.VERSION_NODE }}
           cache: npm
 
+      # El lock se genera en macOS y se consume aquí, en Linux. Los binarios
+      # nativos del proyecto (oxlint, @tailwindcss/oxide, rolldown) traen además
+      # un fallback WebAssembly cuyas dependencias npm no resuelve en macOS, así
+      # que pueden faltar en el lock. Sin esta comprobación, npm ci corta con un
+      # EUSAGE que solo dice "Missing: X" y no explica ni cómo arreglarlo.
+      - name: Comprobar que el lock está completo
+        run: npm run lock:verificar
+
       # npm ci instala exactamente lo del package-lock.json y falla si no coincide
       # con package.json: nada de resolver versiones nuevas por su cuenta.
       - name: Instalar dependencias
