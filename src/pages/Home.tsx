@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { ArrowRight, ArrowUpRight, Storefront } from '@phosphor-icons/react'
 import { useAppStore } from '@/stores/useAppStore'
+import { HERO_RESPALDO, ABOUT_RESPALDO } from '@/lib/respaldos'
+import { aparece, SALIDA } from '@/lib/movimiento'
 import { rutaNegocio } from '@/lib/config'
 import Seo from '@/components/Seo'
 import TransicionPagina from '@/components/TransicionPagina'
@@ -55,10 +57,10 @@ function HeroProducto({ hero }: { hero: Hero | null }) {
 
   // Manda el CMS: cambiar la botella es editar el ERP, no pedir un deploy.
   const img = hero?.imagen ?? pinteno
-  const titulo = hero?.titulo?.trim() || 'Sabor que transforma'
-  const subtitulo = hero?.subtitulo?.trim() || 'VIDAS'
+  const titulo = hero?.titulo?.trim() || HERO_RESPALDO.titulo
+  const subtitulo = hero?.subtitulo?.trim() || HERO_RESPALDO.subtitulo
   // El CMS manda la bajada; antes estaba escrita a mano y hablaba de páramo y destilado.
-  const bajada = hero?.descripcion?.trim() || 'Ingeniería alimentaria. Formulamos, producimos y certificamos.'
+  const bajada = hero?.descripcion?.trim() || HERO_RESPALDO.descripcion
 
   return (
     <section ref={ref} className="relative min-h-[calc(100dvh-8rem)] w-full overflow-hidden md:min-h-[calc(100dvh-4rem)]">
@@ -67,7 +69,7 @@ function HeroProducto({ hero }: { hero: Hero | null }) {
       <div
         aria-hidden
         className="pointer-events-none absolute left-[72%] top-[18vh] h-[44vh] w-[44vh] -translate-x-1/2 -translate-y-1/2 rounded-full md:left-[74%] md:top-[52%] md:h-[70vh] md:w-[70vh]"
-        style={{ background: 'radial-gradient(circle, rgba(0,182,201,0.26), transparent 62%)', filter: 'blur(60px)' }}
+        style={{ background: 'radial-gradient(circle, rgba(0,182,201,0.26), transparent 98%)', filter: 'blur(60px)' }}
       />
 
       {/* Dos composiciones distintas, no una encogida — pero ahora ambas overlapan.
@@ -85,7 +87,7 @@ function HeroProducto({ hero }: { hero: Hero | null }) {
         alt={[titulo, subtitulo].filter(Boolean).join(' ')}
         initial={reduce ? false : { opacity: 0, transform: 'translateY(32px)' }}
         animate={{ opacity: 1, transform: 'translateY(0px)' }}
-        transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+        transition={{ duration: 0.8, ease: SALIDA }}
         className="pointer-events-none absolute bottom-0 -right-[8%] z-0 h-[58vh] w-auto max-w-none drop-shadow-[0_40px_60px_rgba(0,0,0,0.8)] md:left-[70%] md:right-auto md:h-[86vh]"
       />
 
@@ -153,10 +155,7 @@ function Servicios({ services }: { services: Service[] }) {
         {services.slice(0, 5).map((s, i) => (
           <motion.div
             key={s.id}
-            initial={reduce ? false : { opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.5, delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
+            {...aparece(i, reduce)}
             className="group grid grid-cols-[auto_1fr] items-center gap-6 py-7 md:grid-cols-[5rem_1fr_auto] md:gap-10"
           >
             <span className="font-mundial text-2xl font-bold text-primary/40 transition-colors group-hover:text-primary md:text-3xl">
@@ -202,10 +201,7 @@ function Locales({ puntos }: { puntos: PuntoVenta[] }) {
         {puntos.slice(0, 6).map((p, i) => (
           <motion.div
             key={p.id}
-            initial={reduce ? false : { opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.45, delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
+            {...aparece(i, reduce)}
           >
             <Link
               to={rutaNegocio(p.slug)}
@@ -236,25 +232,36 @@ function Locales({ puntos }: { puntos: PuntoVenta[] }) {
 function Nosotros({ about }: { about: About | null }) {
   const numeros = about?.numeros ?? []
   return (
-    <section className="relative overflow-hidden py-24 md:py-28" style={{ background: 'linear-gradient(180deg, #07100f, #0a1f26 45%, #081418)' }}>
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-4 h-96 w-[60rem] -translate-x-1/2 rounded-full" style={{ background: 'radial-gradient(circle, rgba(0,182,201,0.16), transparent 60%)', filter: 'blur(70px)' }} />
+    /* La banda ya no es opaca: es vidrio. Los mismos fondos de siempre —degradado,
+       glow y cordillera— pero translúcidos, con `backdrop-blur` por encima. Lo que se
+       difumina por detrás es la retícula de FondoRivet, así que la sección se apoya en
+       el fondo del sitio en vez de taparlo, y sigue separada del resto. */
+    <section className="relative overflow-hidden  py-24 md:py-28">
+      {/* Capa de vidrio. `backdrop-blur` va aquí y no en la <section>: si estuviera en
+          el padre, difuminaría también a sus propios hijos. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 backdrop-blur-2xl"
+        style={{ background: 'linear-gradient(180deg, rgba(7,16,15,0.62), rgba(10,31,38,0.5) 98%, rgba(8,20,24,0.68))' }}
+      />
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-4 h-96 w-240 `-translate-x-1/2` rounded-full" style={{ background: 'radial-gradient(circle, rgba(0,182,201,0.16), transparent 90%)', filter: 'blur(70px)' }} />
       {/* Cordillera de motivo, coherente con el hero y la etiqueta */}
-      <svg aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-56 w-full opacity-70" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice">
-        <path d="M0 220 L240 110 L400 190 L620 90 L820 200 L1040 110 L1260 210 L1440 130 L1440 300 L0 300 Z" fill="#0a1f26" />
-        <path d="M620 90 L660 140 L580 140 Z" fill="#dff2f4" opacity="0.35" />
+      <svg aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-56 w-full opacity-60" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice">
+        <path d="M0 220 L240 110 L400 190 L620 90 L820 200 L1040 110 L1260 210 L1440 130 L1440 300 L0 300 Z" fill="rgba(10,31,38,0.72)" />
+        <path d="M620 90 L660 140 L580 140 Z" fill="#dff2f4" opacity="0.3" />
       </svg>
 
       <div className="relative mx-auto max-w-6xl px-6">
         <h2 className="max-w-3xl font-mundial text-5xl font-light leading-[1.02] md:text-7xl" style={{ textWrap: 'balance' }}>
-          {about?.titulo?.trim() || 'Innovamos con propósito.'}
+          {about?.titulo?.trim() || ABOUT_RESPALDO.titulo}
         </h2>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-foreground/70">{about?.descripcion}</p>
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-foreground/70">{about?.descripcion?.trim() || ABOUT_RESPALDO.descripcion}</p>
 
         {numeros.length > 0 && (
           <div className="mt-14 grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4">
             {numeros.map((n) => (
               <div key={n.etiqueta}>
-                <div className="font-mundial text-6xl font-extrabold leading-none text-primary md:text-8xl">{n.valor}</div>
+                <div className="font-mundial text-5xl font-bold leading-none text-primary md:text-6xl">{n.valor}</div>
                 <div className="mt-3 text-xs uppercase tracking-[0.15em] text-muted-foreground">{n.etiqueta}</div>
               </div>
             ))}

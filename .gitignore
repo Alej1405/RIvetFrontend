@@ -29,3 +29,9 @@ dist.tar.gz
 # Variables de entorno. `*.local` ya cubre .env.local, pero no estos.
 .env
 .env.production
+
+# Salidas de las pruebas: se regeneran en cada corrida.
+test-results
+playwright-report
+coverage
+.playwright

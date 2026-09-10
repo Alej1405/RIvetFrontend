@@ -50,3 +50,30 @@
   html { scroll-behavior: auto; }
   * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Campos de formulario. Vivían en una etiqueta <style> dentro de
+   Contactos.tsx, o sea una clase global inyectada desde una ruta.
+────────────────────────────────────────────────────────────── */
+@layer components {
+  .input {
+    width: 100%;
+    background: var(--color-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 0.9rem;
+    padding: 0.7rem 0.9rem;
+    color: var(--color-foreground);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .input::placeholder { color: var(--color-muted-foreground); }
+
+  /* El anillo anterior era teal al 15%: ~1,6:1 contra el campo, o sea invisible.
+     Quien sostenía el foco era un borde de 1px que además cambia igual en hover,
+     así que el estado era ambiguo. Ahora el anillo se ve solo. */
+  .input:focus-visible {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 55%, transparent);
+  }
+}

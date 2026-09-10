@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { WhatsappLogo } from '@phosphor-icons/react'
 import { useAppStore } from '@/stores/useAppStore'
 import Seo from '@/components/Seo'
 import PageHeader from '@/components/PageHeader'
 import TransicionPagina from '@/components/TransicionPagina'
+import { aparece } from '@/lib/movimiento'
 
 export default function Servicios() {
   const services = useAppStore((s) => s.services.datos)
@@ -17,6 +18,7 @@ export default function Servicios() {
     void fetchContact()
   }, [fetchServices, fetchContact])
   const wa = contact?.whatsapp
+  const reduce = useReducedMotion()
 
   return (
     <TransicionPagina>
@@ -33,11 +35,8 @@ export default function Servicios() {
             return (
               <motion.article
                 key={s.id}
-                initial={{ opacity: 0, y: 22 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.4 }}
-                transition={{ duration: 0.5, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-7 transition-colors duration-200 hover:border-primary/50 md:flex-row md:items-center md:justify-between md:p-9"
+                {...aparece(i, reduce)}
+                className="flex flex-col gap-5 rounded-3xl border border-border/0 bg-card/0  backdrop-blur-sm p-7 transition-colors duration-200 hover:border-primary/50 md:flex-row md:items-center md:justify-between md:p-9"
               >
                 <div className="flex items-start gap-5">
                   <span className="font-mundial text-3xl font-extrabold text-primary/40">{String(i + 1).padStart(2, '0')}</span>
@@ -46,7 +45,9 @@ export default function Servicios() {
                     <p className="mt-1.5 leading-relaxed text-muted-foreground">{s.descripcion}</p>
                   </div>
                 </div>
-                <a href={href} target="_blank" rel="noopener noreferrer"
+                {/* Solo abre pestaña nueva si de verdad sale a WhatsApp; con el
+                    respaldo interno (/contactos) sería sacar al usuario del sitio. */}
+                <a href={href} target={wa ? '_blank' : undefined} rel={wa ? 'noopener noreferrer' : undefined}
                    className="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary/10 px-5 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground">
                   <WhatsappLogo size={16} weight="fill" /> Pedir información
                 </a>

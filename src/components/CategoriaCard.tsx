@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight } from '@phosphor-icons/react'
 import { storageUrl } from '@/lib/api'
 import { totalProductos } from '@/stores/tiendaSlices'
+import { entra } from '@/lib/movimiento'
 import type { Categoria } from '@/schemas/ecommerce'
 
 /**
@@ -20,14 +21,10 @@ export default function CategoriaCard({ categoria, indice }: { categoria: Catego
   const hijas = categoria.children.filter((h) => h.publicado)
 
   return (
-    <motion.div
-      initial={reduce ? false : { opacity: 0, transform: 'translateY(12px)' }}
-      animate={{ opacity: 1, transform: 'translateY(0px)' }}
-      transition={{ duration: 0.4, delay: indice * 0.06, ease: [0.23, 1, 0.32, 1] }}
-    >
+    <motion.div {...entra(indice, reduce)}>
       <Link
         to={`/catalogo/${categoria.slug}`}
-        className="group relative flex min-h-[22rem] flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 transition-colors duration-200 hover:border-primary/50 focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring md:min-h-[26rem] md:p-8"
+        className="group relative flex min-h-[22rem] flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 transition-[border-color,transform] duration-200 ease-out active:scale-[0.99] hover:border-primary/50 focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring md:min-h-[26rem] md:p-8"
       >
         {imagen ? (
           <>

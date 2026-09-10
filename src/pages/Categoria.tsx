@@ -4,6 +4,10 @@ import { ArrowLeft } from '@phosphor-icons/react'
 import { useAppStore } from '@/stores/useAppStore'
 import { buscarCategoria, idsConDescendencia } from '@/stores/tiendaSlices'
 import ProductoCard from '@/components/ProductoCard'
+import { motion, useReducedMotion } from 'framer-motion'
+import { entra } from '@/lib/movimiento'
+import { VACIOS } from '@/lib/respaldos'
+import { AvisoVacio } from '@/components/Aviso'
 import TransicionPagina from '@/components/TransicionPagina'
 import Seo from '@/components/Seo'
 
@@ -14,6 +18,7 @@ export default function Categoria() {
   const { datos: productos, cargando } = useAppStore((s) => s.productos)
   const fetchCategorias = useAppStore((s) => s.fetchCategorias)
   const fetchProductos = useAppStore((s) => s.fetchProductos)
+  const reduce = useReducedMotion()
 
   useEffect(() => {
     void fetchCategorias()
@@ -52,14 +57,14 @@ export default function Categoria() {
           <ArrowLeft size={16} /> Catálogo
         </Link>
 
-        <header className="mt-6 max-w-2xl">
+        <motion.header {...entra(0, reduce)} className="mt-6 max-w-2xl">
           <h1 className="font-heveltica text-4xl font-bold tracking-tight text-foreground md:text-5xl text-balance">
             {categoria?.nombre ?? ''}
           </h1>
           {categoria?.descripcion && (
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">{categoria.descripcion}</p>
           )}
-        </header>
+        </motion.header>
 
         {cargando && suyos.length === 0 ? (
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -68,13 +73,11 @@ export default function Categoria() {
             ))}
           </div>
         ) : suyos.length === 0 ? (
-          <p className="mt-12 rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
-            Todavía no hay productos publicados en esta categoría.
-          </p>
+          <AvisoVacio>{VACIOS.catalogo}</AvisoVacio>
         ) : (
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {suyos.map((p) => (
-              <ProductoCard key={p.id} producto={p} />
+            {suyos.map((p, i) => (
+              <ProductoCard key={p.id} producto={p} indice={i} />
             ))}
           </div>
         )}

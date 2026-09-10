@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { HeartHalf, Handshake, RocketLaunch, WhatsappLogo } from '@phosphor-icons/react'
 import { useAppStore } from '@/stores/useAppStore'
 import Seo from '@/components/Seo'
 import PageHeader from '@/components/PageHeader'
 import TransicionPagina from '@/components/TransicionPagina'
+import { aparece } from '@/lib/movimiento'
 
 const RAZONES = [
   { icon: HeartHalf, titulo: 'Con propósito', desc: 'Impulsamos el talento de mujeres emprendedoras y el desarrollo local.' },
@@ -21,6 +22,14 @@ export default function Postular() {
   }, [fetchContact])
   const wa = contact?.whatsapp
   const email = contact?.email
+  const reduce = useReducedMotion()
+  // Sin WhatsApp y sin correo no hay a dónde postular: mejor el enlace a Contactos
+  // que un mailto: sin destinatario, que abre el cliente de correo en blanco.
+  const destino = wa
+    ? `https://wa.me/${wa}?text=${encodeURIComponent('Hola, quiero postular a Rivet Ecuador.')}`
+    : email
+      ? `mailto:${email}?subject=Postulación`
+      : '/contactos'
 
   return (
     <TransicionPagina>
@@ -32,8 +41,7 @@ export default function Postular() {
       <section className="mx-auto max-w-6xl px-6 py-10">
         <div className="grid gap-4 md:grid-cols-3">
           {RAZONES.map((r, i) => (
-            <motion.div key={r.titulo} initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }} transition={{ delay: i * 0.08 }}
+            <motion.div key={r.titulo} {...aparece(i, reduce)}
                         className="rounded-2xl border border-border bg-card p-7">
               <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary/12 text-primary">
                 <r.icon size={24} weight="duotone" />
@@ -50,8 +58,9 @@ export default function Postular() {
             <p className="mt-2 max-w-md text-muted-foreground">Envíanos tu hoja de vida y cuéntanos qué te gustaría aportar.</p>
           </div>
           <a
-            href={wa ? `https://wa.me/${wa}?text=${encodeURIComponent('Hola, quiero postular a Rivet Ecuador.')}` : `mailto:${email ?? ''}?subject=Postulación`}
-            target="_blank" rel="noopener noreferrer"
+            href={destino}
+            target={wa || email ? '_blank' : undefined}
+            rel={wa || email ? 'noopener noreferrer' : undefined}
             className="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground transition-transform active:scale-[0.97]"
           >
             <WhatsappLogo size={18} weight="fill" /> Postular ahora

@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useAppStore } from '@/stores/useAppStore'
+import { ABOUT_RESPALDO } from '@/lib/respaldos'
+import { aparece } from '@/lib/movimiento'
 import Seo from '@/components/Seo'
 import PageHeader from '@/components/PageHeader'
 import TransicionPagina from '@/components/TransicionPagina'
@@ -15,11 +17,12 @@ export default function Nosotros() {
   const misionVision = about?.caracteristicas ?? []
   const valores = about?.por_que_nosotros ?? []
   const numeros = about?.numeros ?? []
+  const reduce = useReducedMotion()
 
   return (
     <TransicionPagina>
       <Seo title="Nosotros" description="Rivet Ecuador: empresa de ingeniería alimentaria que impulsa el talento de mujeres emprendedoras. Misión, visión y valores." />
-      <PageHeader eyebrow="Nuestra identidad" title={about?.titulo ?? 'Innovamos con propósito'}>
+      <PageHeader eyebrow="Nuestra identidad" title={about?.titulo?.trim() || ABOUT_RESPALDO.titulo}>
         {about?.descripcion}
       </PageHeader>
 
@@ -28,8 +31,7 @@ export default function Nosotros() {
         <section className="mx-auto max-w-6xl px-6 py-8">
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {numeros.map((n, i) => (
-              <motion.div key={n.etiqueta} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }} transition={{ delay: i * 0.06 }}
+              <motion.div key={n.etiqueta} {...aparece(i, reduce)}
                           className="rounded-2xl border border-border bg-card p-6">
                 <div className="font-mundial text-4xl font-extrabold text-primary md:text-5xl">{n.valor}</div>
                 <div className="mt-2 text-sm text-muted-foreground">{n.etiqueta}</div>
@@ -44,8 +46,7 @@ export default function Nosotros() {
         <section className="mx-auto max-w-6xl px-6 py-16">
           <div className="grid gap-5 md:grid-cols-2">
             {misionVision.map((mv, i) => (
-              <motion.div key={mv.titulo} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+              <motion.div key={mv.titulo} {...aparece(i, reduce)}
                           className="rounded-[2rem] border border-border bg-card p-8 transition-colors duration-200 hover:border-primary/50 md:p-10">
                 <h2 className="text-2xl font-bold text-primary">{mv.titulo}</h2>
                 <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{mv.descripcion}</p>
@@ -61,8 +62,7 @@ export default function Nosotros() {
           <h2 className="text-3xl font-light md:text-4xl">Lo que nos <span className="font-bold text-primary">define</span></h2>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {valores.map((v, i) => (
-              <motion.div key={v.titulo} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+              <motion.div key={v.titulo} {...aparece(i, reduce)}
                           className="rounded-2xl border border-border bg-card p-6">
                 <h3 className="text-lg font-bold">{v.titulo}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{v.descripcion}</p>

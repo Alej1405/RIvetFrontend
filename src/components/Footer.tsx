@@ -1,15 +1,18 @@
 import { NavLink } from 'react-router-dom'
 import { WhatsappLogo, InstagramLogo, FacebookLogo, MapPin, EnvelopeSimple, Phone } from '@phosphor-icons/react'
 import { useAppStore } from '@/stores/useAppStore'
+import { contactoSeguro } from '@/lib/respaldos'
 
 const logo = '/logo_blanco.svg'
 
 export default function Footer() {
-  const contact = useAppStore((s) => s.contact.datos)
+  const contactoErp = useAppStore((s) => s.contact.datos)
+  // Si la API no respondió, entra el respaldo; un campo vacío a propósito se respeta.
+  const contact = contactoSeguro(contactoErp)
   const redes = contact?.redes ?? {}
 
   return (
-    <footer className="relative mt-24 border-t border-border/60 px-6 pt-16 pb-10">
+    <footer className="relative mt-24  px-6 pt-16 pb-10 bg-[#050b0c9b]">
       <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <img src={logo} alt="Rivet Ecuador" className="h-7 w-auto" />

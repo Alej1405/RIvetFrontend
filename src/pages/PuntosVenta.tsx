@@ -1,15 +1,21 @@
 import { useEffect } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowRight, MapPin, Storefront } from '@phosphor-icons/react'
 import { useAppStore } from '@/stores/useAppStore'
 import { rutaNegocio } from '@/lib/config'
 import TransicionPagina from '@/components/TransicionPagina'
 import Seo from '@/components/Seo'
+import { entra } from '@/lib/movimiento'
+import { VACIOS } from '@/lib/respaldos'
+import { AvisoError, AvisoVacio } from '@/components/Aviso'
 import type { PuntoVenta } from '@/schemas/cms'
 
 export default function PuntosVenta() {
   const { datos: puntos, cargando, error } = useAppStore((s) => s.puntosVenta)
   const fetchPuntosVenta = useAppStore((s) => s.fetchPuntosVenta)
+
+  const reduce = useReducedMotion()
 
   useEffect(() => {
     void fetchPuntosVenta()
@@ -23,7 +29,7 @@ export default function PuntosVenta() {
       />
 
       <section className="mx-auto max-w-6xl px-4 py-14 md:px-6 md:py-24">
-        <header className="max-w-2xl">
+        <motion.header {...entra(0, reduce)} className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">Dónde encontrarnos</p>
           <h1 className="mt-4 font-heveltica text-4xl font-bold tracking-tight text-foreground md:text-5xl text-balance">
             Puntos de venta
@@ -31,12 +37,10 @@ export default function PuntosVenta() {
           <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
             Locales que trabajan con Rivet. Entra a cada uno para ver su carta y cómo llegar.
           </p>
-        </header>
+        </motion.header>
 
         {error ? (
-          <p className="mt-12 rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
-            No pudimos cargar los puntos de venta. Recarga la página.
-          </p>
+          <AvisoError mensaje={error} onReintentar={() => void fetchPuntosVenta()} />
         ) : cargando && puntos.length === 0 ? (
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {[0, 1, 2].map((i) => (
@@ -44,14 +48,12 @@ export default function PuntosVenta() {
             ))}
           </div>
         ) : puntos.length === 0 ? (
-          <p className="mt-12 rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
-            Todavía no hay puntos de venta registrados.
-          </p>
+          <AvisoVacio>{VACIOS.puntosVenta}</AvisoVacio>
         ) : (
           <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {puntos.map((p) => (
+            {puntos.map((p, i) => (
               <li key={p.id}>
-                <Card punto={p} />
+                <Card punto={p} indice={i} />
               </li>
             ))}
           </ul>
@@ -61,13 +63,15 @@ export default function PuntosVenta() {
   )
 }
 
-function Card({ punto }: { punto: PuntoVenta }) {
+function Card({ punto, indice }: { punto: PuntoVenta; indice: number }) {
+  const reduce = useReducedMotion()
   return (
+    <motion.div {...entra(indice, reduce)} className="h-full">
     <Link
       to={rutaNegocio(punto.slug)}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors duration-200 hover:border-primary/50 focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="group flex h-full flex-col overflow-hidden rounded-xl border border-border/0 bg-card/78 transition-[border-color,transform] duration-200 ease-out active:scale-[0.99] hover:border-primary/50 focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       {/* Banner o, si no hay, una cabecera con degradado de marca: la card nunca queda coja. */}
       <div className="relative aspect-[16/9] overflow-hidden bg-secondary">
@@ -104,5 +108,6 @@ function Card({ punto }: { punto: PuntoVenta }) {
         </span>
       </div>
     </Link>
+    </motion.div>
   )
 }

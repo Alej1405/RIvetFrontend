@@ -65,6 +65,23 @@ jobs:
       - name: Revisar el código
         run: npm run lint
 
+      # Unitarias: funciones puras y componentes con jsdom. Corren en segundos y
+      # no necesitan servidor ni red.
+      #
+      # INFORMATIVAS, no puerta de despliegue. Dos razones:
+      #
+      #   1. El ERP sigue en desarrollo. Sus contratos y su contenido todavía se
+      #      mueven, así que una prueba en rojo hoy no significa que el frontend
+      #      esté mal: significa que el backend cambió, que es lo esperado.
+      #   2. Somos dos. Quien despliega corre las pruebas antes en local y decide.
+      #
+      # CUÁNDO VOLVER A BLOQUEAR: cuando se cierre el desarrollo del ERP. Ahí se
+      # quita el `continue-on-error` de este paso y del de Playwright, y las
+      # pruebas vuelven a ser condición para publicar.
+      - name: Pruebas unitarias (informativas)
+        continue-on-error: true
+        run: npm test
+
       - name: Comprobar que el token llegó
         env:
           TOKEN: ${{ secrets.RIVET_CMS_TOKEN }}
@@ -102,6 +119,38 @@ jobs:
           done
 
           echo "Peso del sitio: $(du -sh dist | cut -f1)"
+
+      # Integración y adaptabilidad contra el sitio ya compilado. Se sirve el dist/
+      # en vez del servidor de desarrollo: así se prueba lo mismo que se publica.
+      # Solo Chromium; los tres perfiles son viewports, no motores distintos.
+      - name: Preparar el navegador
+        run: npx playwright install --with-deps chromium
+
+      #
+      # INFORMATIVAS, y estas con más motivo todavía: pegan al ERP real, que sigue
+      # en desarrollo. Bloqueando el deploy, cualquier cambio en el panel o en un
+      # endpoint —renombrar una categoría, despublicar un producto, mover un campo—
+      # dejaría el sitio sin publicar aunque el frontend esté perfecto. Vuelven a
+      # bloquear cuando el ERP esté cerrado.
+      - name: Pruebas de integración y adaptabilidad (informativas)
+        continue-on-error: true
+        env:
+          BASE_URL: http://localhost:4173
+        run: |
+          npx vite preview --port 4173 &
+          npx wait-on http://localhost:4173 --timeout 60000 || sleep 8
+          npx playwright test
+
+      # `always()` y no `failure()`: con las pruebas informativas el job termina en
+      # verde aunque algo falle, así que sin esto el informe no se guardaría nunca
+      # y no habría forma de ver qué pasó.
+      - name: Guardar el informe de Playwright
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: informe-playwright
+          path: playwright-report/
+          retention-days: 5
 
       - name: Guardar el resultado
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

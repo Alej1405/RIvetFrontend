@@ -4,6 +4,8 @@ import { useAppStore } from '@/stores/useAppStore'
 import PostModal from '@/components/PostModal'
 import TransicionPagina from '@/components/TransicionPagina'
 import Seo from '@/components/Seo'
+import { VACIOS } from '@/lib/respaldos'
+import { AvisoError, AvisoVacio } from '@/components/Aviso'
 
 const fecha = (iso: string | null) =>
   iso ? new Date(iso).toLocaleDateString('es-EC', { day: 'numeric', month: 'short', year: 'numeric' }) : ''
@@ -33,19 +35,15 @@ export default function Blog() {
         </header>
 
         {error ? (
-          <p className="mt-12 rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
-            No pudimos cargar las publicaciones. Recarga la página.
-          </p>
+          <AvisoError mensaje={error} onReintentar={() => void fetchPosts()} />
         ) : cargando && posts.length === 0 ? (
           <div className="mt-12 grid gap-5 sm:grid-cols-2">
             {[0, 1].map((i) => (
-              <div key={i} className="h-72 animate-pulse rounded-xl border border-border bg-card" />
+              <div key={i} className="h-72 animate-pulse rounded-xl border border-border/0 bg-card" />
             ))}
           </div>
         ) : posts.length === 0 ? (
-          <p className="mt-12 rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
-            Todavía no hay publicaciones.
-          </p>
+          <AvisoVacio>{VACIOS.blog}</AvisoVacio>
         ) : (
           <ul className="mt-12 grid gap-5 sm:grid-cols-2">
             {posts.map((post) => (
