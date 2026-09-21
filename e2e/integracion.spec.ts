@@ -116,12 +116,7 @@ test.describe('rutas', () => {
    *
    * App.tsx no declara <Route path="*">, así que cualquier URL que no coincida
    * deja #root sin un solo hijo: pantalla en blanco, ni header ni pie. Comprobado
-   * en /no-existe-esta-ruta, /producto/slug-inventado y
-   * /puntos-venta/local-que-no-existe.
-   *
-   * El tercero es el que preocupa: los QR impresos de los puntos de venta apuntan
-   * a /puntos-venta/{slug}. Si un local se borra del ERP o el slug cambia, quien
-   * escanee ese código ve una página vacía.
+   * en /no-existe-esta-ruta y /producto/slug-inventado.
    *
    * Va con test.fail() a propósito: deja el bug documentado y ejecutándose sin
    * bloquear el despliegue. El día que se añada la ruta comodín, Playwright avisa

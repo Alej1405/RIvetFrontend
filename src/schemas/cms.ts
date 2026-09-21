@@ -115,41 +115,12 @@ export const PostDetalleSchema = z.object({
   publicado_en: texto,
 })
 
-/**
- * Ítem de la carta de un punto de venta. Igual que en producto, el ERP serializa los
- * decimales como string ("12.00"); se coerciona a número. `precio_promo` puede ser null
- * y ahí `.nullable()` lo deja pasar sin convertirlo a 0.
- */
-export const MenuItemSchema = z.object({
-  id: z.number(),
-  nombre: z.string(),
-  descripcion: texto,
-  precio: z.coerce.number(),
-  es_promocion: z.boolean(),
-  precio_promo: z.coerce.number().nullable(),
-  imagen: urlImagen,
-})
+
+
 
 /**
- * Colores de branding del cliente. El ERP manda el objeto siempre, pero cada campo
- * puede venir null si el negocio no lo cargó. Se normaliza con fallback en MarcaCliente.
- */
-export const ColoresSchema = z.object({
-  primario: texto,
-  secundario: texto,
-  acento: texto,
-})
-
-/** Foto de la galería del negocio. `alt` puede venir null. */
-export const GaleriaItemSchema = z.object({
-  id: z.number(),
-  imagen: z.string().url(),
-  alt: texto,
-  orden: z.number(),
-})
-
-/**
- * Punto de venta (para Rivet, un cliente) en la lista de /puntos-venta.
+ * Local (para Rivet, un cliente) de la lista de /puntos-venta. Trae todo lo que
+ * el modal muestra: no hay endpoint de detalle.
  * Construir defensivo: varios campos pueden llegar null.
  * `latitud`/`longitud` pueden venir como string o número según el ERP.
  */
@@ -160,24 +131,13 @@ export const PuntoVentaSchema = z.object({
   descripcion: texto,
   horario: texto,
   logo: urlImagen,
-  banner: urlImagen,
   direccion: texto,
   telefono: texto,
   latitud: z.union([z.string(), z.number()]).nullable(),
   longitud: z.union([z.string(), z.number()]).nullable(),
   google_maps_url: texto,
-  colores: ColoresSchema.nullable().default(null),
-  menu_activo: z.boolean(),
 })
 
-/**
- * Detalle de /puntos-venta/{slug}: los mismos campos + la carta en `menu` y las fotos
- * en `galeria`. Son dos landings distintas alimentadas por esta misma respuesta.
- */
-export const PuntoVentaDetalleSchema = PuntoVentaSchema.extend({
-  menu: z.array(MenuItemSchema).default([]),
-  galeria: z.array(GaleriaItemSchema).default([]),
-})
 
 export const PuntoVentaListSchema = z.array(PuntoVentaSchema)
 
@@ -199,8 +159,4 @@ export type Faq = z.infer<typeof FaqSchema>
 export type Contact = z.infer<typeof ContactSchema>
 export type Post = z.infer<typeof PostSchema>
 export type PostDetalle = z.infer<typeof PostDetalleSchema>
-export type MenuItem = z.infer<typeof MenuItemSchema>
-export type ColoresCms = z.infer<typeof ColoresSchema>
-export type GaleriaItem = z.infer<typeof GaleriaItemSchema>
 export type PuntoVenta = z.infer<typeof PuntoVentaSchema>
-export type PuntoVentaDetalle = z.infer<typeof PuntoVentaDetalleSchema>

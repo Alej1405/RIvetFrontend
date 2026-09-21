@@ -4,12 +4,12 @@ import type { StateCreator } from 'zustand'
 import { cmsApi } from '@/lib/api'
 import {
   AboutSchema, ClientListSchema, ContactSchema, FaqListSchema, HeroSchema,
-  PostDetalleSchema, PostListSchema, PuntoVentaDetalleSchema, PuntoVentaListSchema,
-  ServiceListSchema, TeamListSchema,
+  PostDetalleSchema, PostListSchema, PuntoVentaListSchema,
+  ServiceListSchema, TeamListSchema
 } from '@/schemas/cms'
 import type {
-  About, Client, Contact, Faq, Hero, Post, PostDetalle, PuntoVenta, PuntoVentaDetalle,
-  Service, TeamMember,
+  About, Client, Contact, Faq, Hero, Post, PostDetalle, PuntoVenta,
+  Service, TeamMember
 } from '@/schemas/cms'
 import { cargarRecurso, recursoVacio, type Recurso } from './recurso'
 
@@ -20,7 +20,7 @@ export interface HeroSlice {
 export const heroSlice: StateCreator<HeroSlice> = (set, get) => ({
   hero: recursoVacio<Hero | null>(null),
   fetchHero: () =>
-    cargarRecurso(get().hero, () => cmsApi('hero', HeroSchema), (hero) => set({ hero })),
+    cargarRecurso(get().hero, () => cmsApi('hero', HeroSchema), (hero) => set({ hero }))
 })
 
 export interface AboutSlice {
@@ -30,7 +30,7 @@ export interface AboutSlice {
 export const aboutSlice: StateCreator<AboutSlice> = (set, get) => ({
   about: recursoVacio<About | null>(null),
   fetchAbout: () =>
-    cargarRecurso(get().about, () => cmsApi('about', AboutSchema), (about) => set({ about })),
+    cargarRecurso(get().about, () => cmsApi('about', AboutSchema), (about) => set({ about }))
 })
 
 export interface ServicesSlice {
@@ -42,7 +42,7 @@ export const servicesSlice: StateCreator<ServicesSlice> = (set, get) => ({
   fetchServices: () =>
     cargarRecurso(get().services, () => cmsApi('services', ServiceListSchema), (services) =>
       set({ services }),
-    ),
+    )
 })
 
 export interface TeamSlice {
@@ -52,7 +52,7 @@ export interface TeamSlice {
 export const teamSlice: StateCreator<TeamSlice> = (set, get) => ({
   team: recursoVacio<TeamMember[]>([]),
   fetchTeam: () =>
-    cargarRecurso(get().team, () => cmsApi('team', TeamListSchema), (team) => set({ team })),
+    cargarRecurso(get().team, () => cmsApi('team', TeamListSchema), (team) => set({ team }))
 })
 
 export interface ClientsSlice {
@@ -64,7 +64,7 @@ export const clientsSlice: StateCreator<ClientsSlice> = (set, get) => ({
   fetchClients: () =>
     cargarRecurso(get().clients, () => cmsApi('clients', ClientListSchema), (clients) =>
       set({ clients }),
-    ),
+    )
 })
 
 export interface FaqSlice {
@@ -73,7 +73,7 @@ export interface FaqSlice {
 }
 export const faqSlice: StateCreator<FaqSlice> = (set, get) => ({
   faq: recursoVacio<Faq[]>([]),
-  fetchFaq: () => cargarRecurso(get().faq, () => cmsApi('faq', FaqListSchema), (faq) => set({ faq })),
+  fetchFaq: () => cargarRecurso(get().faq, () => cmsApi('faq', FaqListSchema), (faq) => set({ faq }))
 })
 
 export interface ContactSlice {
@@ -85,7 +85,7 @@ export const contactSlice: StateCreator<ContactSlice> = (set, get) => ({
   fetchContact: () =>
     cargarRecurso(get().contact, () => cmsApi('contact', ContactSchema), (contact) =>
       set({ contact }),
-    ),
+    )
 })
 
 export interface PostsSlice {
@@ -111,32 +111,21 @@ export const postsSlice: StateCreator<PostsSlice> = (set, get) => ({
       (postAbierto) => set({ postAbierto }),
     ),
 
-  cerrarPost: () => set({ postAbierto: recursoVacio<PostDetalle | null>(null) }),
+  cerrarPost: () => set({ postAbierto: recursoVacio<PostDetalle | null>(null) })
 })
 
 export interface PuntosVentaSlice {
+  /** La lista trae todo lo que el modal muestra: no hay endpoint de detalle. */
   puntosVenta: Recurso<PuntoVenta[]>
-  /** Detalle del punto abierto en su ruta. La lista no trae `menu`, hay que pedirlo. */
-  puntoAbierto: Recurso<PuntoVentaDetalle | null>
   fetchPuntosVenta: () => Promise<void>
-  abrirPuntoVenta: (slug: string) => Promise<void>
 }
 export const puntosVentaSlice: StateCreator<PuntosVentaSlice> = (set, get) => ({
   puntosVenta: recursoVacio<PuntoVenta[]>([]),
-  puntoAbierto: recursoVacio<PuntoVentaDetalle | null>(null),
 
   fetchPuntosVenta: () =>
     cargarRecurso(
       get().puntosVenta,
       () => cmsApi('puntos-venta', PuntoVentaListSchema),
       (puntosVenta) => set({ puntosVenta }),
-    ),
-
-  abrirPuntoVenta: (slug) =>
-    cargarRecurso(
-      // Se reinicia en cada apertura: si no, el detalle muestra el punto anterior mientras carga.
-      recursoVacio<PuntoVentaDetalle | null>(null),
-      () => cmsApi(`puntos-venta/${slug}`, PuntoVentaDetalleSchema),
-      (puntoAbierto) => set({ puntoAbierto }),
-    ),
+    )
 })

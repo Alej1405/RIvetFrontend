@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useScroll, useTransform, useReducedMotion  } from 'framer-motion'
 import { ArrowRight, ArrowUpRight, Storefront } from '@phosphor-icons/react'
 import { useAppStore } from '@/stores/useAppStore'
 import { HERO_RESPALDO, ABOUT_RESPALDO } from '@/lib/respaldos'
 import { aparece, SALIDA } from '@/lib/movimiento'
-import { rutaNegocio } from '@/lib/config'
+import LocalModal from '@/components/LocalModal'
 import Seo from '@/components/Seo'
 import TransicionPagina from '@/components/TransicionPagina'
 import type { About, Hero, PuntoVenta, Service } from '@/schemas/cms'
@@ -180,6 +180,8 @@ function Servicios({ services }: { services: Service[] }) {
    Prueba social data-driven: dónde encontrar el producto. Si el CMS no devuelve
    ninguno, la sección no se pinta — nada de bloques vacíos en la home. */
 function Locales({ puntos }: { puntos: PuntoVenta[] }) {
+  // Misma ficha que en /puntos-venta: se expande aquí, sin navegar.
+  const [abierto, setAbierto] = useState<PuntoVenta | null>(null)
   const reduce = useReducedMotion()
   if (puntos.length === 0) return null
 
@@ -203,11 +205,10 @@ function Locales({ puntos }: { puntos: PuntoVenta[] }) {
             key={p.id}
             {...aparece(i, reduce)}
           >
-            <Link
-              to={rutaNegocio(p.slug)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50"
+            <button
+              type="button"
+              onClick={() => setAbierto(p)}
+              className="group flex w-full items-center gap-4 rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary/50"
             >
               <div className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-lg bg-secondary">
                 {p.logo ? (
@@ -220,10 +221,14 @@ function Locales({ puntos }: { puntos: PuntoVenta[] }) {
                 <h3 className="truncate font-bold text-foreground transition-colors group-hover:text-primary">{p.nombre}</h3>
                 {p.direccion && <p className="truncate text-sm text-muted-foreground">{p.direccion}</p>}
               </div>
-            </Link>
+            </button>
           </motion.div>
         ))}
       </div>
+
+      <AnimatePresence>
+        {abierto && <LocalModal punto={abierto} onCerrar={() => setAbierto(null)} />}
+      </AnimatePresence>
     </section>
   )
 }

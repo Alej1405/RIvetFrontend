@@ -17,17 +17,6 @@ export const hayPortal = (): boolean => PORTAL_CLIENTES.trim().length > 0
  */
 export const SITIO_URL = 'https://rivet-ec.com'
 
-/**
- * Rutas de las dos landings standalone de un punto de venta. Son cosas distintas:
- * la del negocio (galería + branding del cliente) y la del menú/carta. La forma de
- * la URL sigue el patrón `{slug}` del endpoint del ERP.
- */
-export const rutaNegocio = (slug: string): string => `/puntos-venta/${slug}`
-export const rutaMenu = (slug: string): string => `/puntos-venta/${slug}/menu`
-
-/** URLs públicas absolutas (las que se comparten y van en el OpenGraph). */
-export const urlNegocio = (slug: string): string => `${SITIO_URL}${rutaNegocio(slug)}`
-export const urlMenu = (slug: string): string => `${SITIO_URL}${rutaMenu(slug)}`
 
 /**
  * Normaliza el teléfono de un punto de venta (texto libre del ERP) al formato que

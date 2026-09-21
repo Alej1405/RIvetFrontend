@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { numeroWhatsapp, urlWhatsapp, rutaNegocio, rutaMenu, urlMenu, hayPortal } from '@/lib/config'
+import { numeroWhatsapp, urlWhatsapp, hayPortal } from '@/lib/config'
 
 /**
  * numeroWhatsapp normaliza el teléfono que el cliente escribe a mano en el ERP.
@@ -49,16 +49,6 @@ describe('urlWhatsapp', () => {
   })
 })
 
-describe('rutas de punto de venta', () => {
-  it('sigue el patrón del endpoint', () => {
-    expect(rutaNegocio('alejandro')).toBe('/puntos-venta/alejandro')
-    expect(rutaMenu('alejandro')).toBe('/puntos-venta/alejandro/menu')
-  })
-
-  it('la url pública es absoluta: es la que se imprime como QR', () => {
-    expect(urlMenu('alejandro')).toBe('https://rivet-ec.com/puntos-venta/alejandro/menu')
-  })
-})
 
 describe('hayPortal', () => {
   it('está activo mientras PORTAL_CLIENTES tenga valor', () => {

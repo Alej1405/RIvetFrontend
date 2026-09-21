@@ -1,9 +1,8 @@
-import { useEffect } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, MapPin, Storefront } from '@phosphor-icons/react'
 import { useAppStore } from '@/stores/useAppStore'
-import { rutaNegocio } from '@/lib/config'
+import LocalModal from '@/components/LocalModal'
 import TransicionPagina from '@/components/TransicionPagina'
 import Seo from '@/components/Seo'
 import { entra } from '@/lib/movimiento'
@@ -14,6 +13,8 @@ import type { PuntoVenta } from '@/schemas/cms'
 export default function PuntosVenta() {
   const { datos: puntos, cargando, error } = useAppStore((s) => s.puntosVenta)
   const fetchPuntosVenta = useAppStore((s) => s.fetchPuntosVenta)
+  // La ficha se abre con el dato que ya está en la lista: sin navegar y sin pedir nada.
+  const [abierto, setAbierto] = useState<PuntoVenta | null>(null)
 
   const reduce = useReducedMotion()
 
@@ -35,7 +36,7 @@ export default function PuntosVenta() {
             Puntos de venta
           </h1>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
-            Locales que trabajan con Rivet. Entra a cada uno para ver su carta y cómo llegar.
+            Locales que trabajan con Rivet. Toca uno para ver su información y cómo llegar.
           </p>
         </motion.header>
 
@@ -53,47 +54,45 @@ export default function PuntosVenta() {
           <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {puntos.map((p, i) => (
               <li key={p.id}>
-                <Card punto={p} indice={i} />
+                <Card punto={p} indice={i} onAbrir={() => setAbierto(p)} />
               </li>
             ))}
           </ul>
         )}
       </section>
+
+      <AnimatePresence>
+        {abierto && <LocalModal punto={abierto} onCerrar={() => setAbierto(null)} />}
+      </AnimatePresence>
     </TransicionPagina>
   )
 }
 
-function Card({ punto, indice }: { punto: PuntoVenta; indice: number }) {
+function Card({ punto, indice, onAbrir }: { punto: PuntoVenta; indice: number; onAbrir: () => void }) {
   const reduce = useReducedMotion()
   return (
     <motion.div {...entra(indice, reduce)} className="h-full">
-    <Link
-      to={rutaNegocio(punto.slug)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-border/0 bg-card/78 transition-[border-color,transform] duration-200 ease-out active:scale-[0.99] hover:border-primary/50 focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    <button
+      type="button"
+      onClick={onAbrir}
+      className="group flex h-full w-full flex-col text-left overflow-hidden rounded-xl border border-border/0 bg-card/78 transition-[border-color,transform] duration-200 ease-out active:scale-[0.99] hover:border-primary/50 focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
-      {/* Banner o, si no hay, una cabecera con degradado de marca: la card nunca queda coja. */}
       <div className="relative aspect-[16/9] overflow-hidden bg-secondary">
-        {punto.banner ? (
-          <img
-            src={punto.banner}
-            alt=""
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-          />
-        ) : (
-          <div
-            className="grid h-full place-items-center"
-            style={{ background: 'radial-gradient(circle at 30% 20%, rgba(0,182,201,0.22), transparent 60%), #0e1d1f' }}
-          >
-            {punto.logo ? (
-              <img src={punto.logo} alt="" className="h-16 w-16 rounded-full object-cover" />
-            ) : (
-              <Storefront size={40} className="text-primary/50" weight="duotone" />
-            )}
-          </div>
-        )}
+        <div
+          className="grid h-full place-items-center"
+          style={{ background: 'radial-gradient(circle at 30% 20%, rgba(0,182,201,0.22), transparent 60%), #0e1d1f' }}
+        >
+          {punto.logo ? (
+            <img
+              src={punto.logo}
+              alt=""
+              loading="lazy"
+              className="h-16 w-16 rounded-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+            />
+          ) : (
+            <Storefront size={40} className="text-primary/50" weight="duotone" />
+          )}
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col p-5">
@@ -104,10 +103,10 @@ function Card({ punto, indice }: { punto: PuntoVenta; indice: number }) {
           </p>
         )}
         <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-transform duration-200 ease-out group-hover:translate-x-1">
-          Visitar <ArrowRight size={15} weight="bold" />
+          Ver información <ArrowRight size={15} weight="bold" />
         </span>
       </div>
-    </Link>
+    </button>
     </motion.div>
   )
 }

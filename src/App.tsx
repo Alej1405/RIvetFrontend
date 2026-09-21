@@ -11,8 +11,6 @@ const Categoria = lazy(() => import('@/pages/Categoria'))
 const Producto = lazy(() => import('@/pages/Producto'))
 const Blog = lazy(() => import('@/pages/Blog'))
 const PuntosVenta = lazy(() => import('@/pages/PuntosVenta'))
-const Negocio = lazy(() => import('@/pages/Negocio'))
-const Menu = lazy(() => import('@/pages/Menu'))
 const Nosotros = lazy(() => import('@/pages/Nosotros'))
 const Servicios = lazy(() => import('@/pages/Servicios'))
 const Contactos = lazy(() => import('@/pages/Contactos'))
@@ -38,12 +36,6 @@ function RutasAnimadas() {
           <Route path="/faq" element={<Faq />} />
           <Route path="/postular" element={<Postular />} />
         </Route>
-
-        {/* Microsites de cada punto de venta. Van FUERA del Layout a propósito: sin
-            header/nav/footer de Rivet y con la marca (colores) del propio cliente.
-            Son dos páginas distintas: el negocio (galería) y el menú. */}
-        <Route path="/puntos-venta/:slug" element={<Negocio />} />
-        <Route path="/puntos-venta/:slug/menu" element={<Menu />} />
       </Routes>
     </AnimatePresence>
   )
