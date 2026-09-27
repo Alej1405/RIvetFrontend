@@ -7,6 +7,7 @@ import { storageUrl } from '@/lib/api'
 import Precio from '@/components/Precio'
 import TransicionPagina from '@/components/TransicionPagina'
 import Seo from '@/components/Seo'
+import Compartir from '@/components/Compartir'
 import { ERRORES } from '@/lib/respaldos'
 import { AvisoError } from '@/components/Aviso'
 import { entra } from '@/lib/movimiento'
@@ -78,8 +79,11 @@ export default function Producto() {
   return (
     <TransicionPagina>
       <Seo
-        title={producto.nombre}
+        title={producto.meta_titulo ?? producto.nombre}
         description={producto.meta_descripcion ?? descripcion.slice(0, 155)}
+        url={`/producto/${producto.slug}`}
+        image={storageUrl(imagenes[0]?.path)}
+        type="article"
       />
 
       <section className="mx-auto max-w-6xl px-4 py-10 md:px-6 md:py-16">
@@ -154,14 +158,24 @@ export default function Producto() {
               </ul>
             )}
 
-            <a
-              href={wa ? `https://wa.me/${wa}?text=${mensaje}` : '/contactos'}
-              target={wa ? '_blank' : undefined}
-              rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 font-semibold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.98]"
-            >
-              <WhatsappLogo size={18} weight="fill" /> Pedir por WhatsApp
-            </a>
+            {/* Pedir y compartir, uno al lado del otro: quien no compra hoy
+                igual puede mandarle el producto a quien sí decide. */}
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <a
+                href={wa ? `https://wa.me/${wa}?text=${mensaje}` : '/contactos'}
+                target={wa ? '_blank' : undefined}
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 font-semibold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.98]"
+              >
+                <WhatsappLogo size={18} weight="fill" /> Pedir por WhatsApp
+              </a>
+
+              <Compartir
+                titulo={producto.nombre}
+                texto={producto.meta_descripcion ?? descripcion.slice(0, 120)}
+                url={`/producto/${producto.slug}`}
+              />
+            </div>
           </motion.div>
         </div>
       </section>

@@ -33,7 +33,12 @@ export default function Postular() {
 
   return (
     <TransicionPagina>
-      <Seo title="Trabaja con nosotros" description="Únete a Rivet Ecuador. Buscamos personas que quieran transformar la industria alimentaria con propósito." />
+      <Seo
+        title="Trabaja con nosotros"
+        description="Únete a Rivet Ecuador. Buscamos personas que quieran transformar la industria alimentaria con propósito."
+        url="/postular"
+        noindex
+      />
       <PageHeader eyebrow="Únete al equipo" title={<>Construyamos <span className="font-bold text-primary">identidad</span>, juntos.</>}>
         Si te mueve la ingeniería alimentaria y el desarrollo local, queremos conocerte.
       </PageHeader>

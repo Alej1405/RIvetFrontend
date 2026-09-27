@@ -30,7 +30,7 @@ export default function Home() {
 
   return (
     <TransicionPagina>
-      <Seo title="Inicio" description="Rivet Ecuador: ingeniería alimentaria. Formulamos, producimos y certificamos licores, salsas y productos alimentarios con estándar industrial. Maquila y permisos ARCSA." />
+      <Seo title="Inicio" description="Rivet Ecuador: ingeniería alimentaria. Formulamos, producimos y certificamos licores, salsas y productos alimentarios con estándar industrial. Maquila y permisos ARCSA." url="/" />
       <HeroProducto hero={hero} />
       <Servicios services={services} />
       <Locales puntos={puntosVenta} />

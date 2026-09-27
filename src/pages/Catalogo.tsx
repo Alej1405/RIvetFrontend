@@ -30,7 +30,11 @@ export default function Catalogo() {
 
   return (
     <TransicionPagina>
-      <Seo title="Catálogo" description="Alimentos y bebidas de Rivet Ecuador: producto propio con precio de distribuidor." />
+      <Seo
+        title="Catálogo"
+        description="Alimentos y bebidas de Rivet Ecuador: producto propio, formulado y elaborado por nosotros, con precio de distribuidor en todo el catálogo."
+        url="/catalogo"
+      />
 
       <section className="mx-auto max-w-6xl px-4 py-14 md:px-6 md:py-24">
         <motion.header {...entra(0, reduce)} className="max-w-2xl">

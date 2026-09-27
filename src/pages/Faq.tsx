@@ -19,7 +19,7 @@ export default function Faq() {
 
   return (
     <TransicionPagina>
-      <Seo title="Preguntas frecuentes" description="Resolvemos las dudas más comunes sobre maquila, formulación, garantías y tiempos de respuesta." />
+      <Seo title="Preguntas frecuentes" description="Resolvemos las dudas más comunes sobre maquila, formulación, garantías y tiempos de respuesta." url="/faq" />
       <PageHeader eyebrow="Ayuda" title={<>Preguntas <span className="font-bold text-primary">frecuentes</span></>}>
         Respuestas rápidas a las inquietudes más comunes sobre nuestros servicios.
       </PageHeader>

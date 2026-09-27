@@ -94,7 +94,6 @@ export interface PostsSlice {
   postAbierto: Recurso<PostDetalle | null>
   fetchPosts: () => Promise<void>
   abrirPost: (slug: string) => Promise<void>
-  cerrarPost: () => void
 }
 export const postsSlice: StateCreator<PostsSlice> = (set, get) => ({
   posts: recursoVacio<Post[]>([]),
@@ -105,13 +104,12 @@ export const postsSlice: StateCreator<PostsSlice> = (set, get) => ({
 
   abrirPost: (slug) =>
     cargarRecurso(
-      // Se reinicia en cada apertura: si no, el modal muestra el post anterior mientras carga.
+      // Se reinicia en cada apertura: si no, al saltar de una noticia a otra
+      // se ve la anterior mientras carga la nueva.
       recursoVacio<PostDetalle | null>(null),
       () => cmsApi(`posts/${slug}`, PostDetalleSchema),
       (postAbierto) => set({ postAbierto }),
     ),
-
-  cerrarPost: () => set({ postAbierto: recursoVacio<PostDetalle | null>(null) })
 })
 
 export interface PuntosVentaSlice {

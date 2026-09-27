@@ -5,9 +5,34 @@
 # compartido de un punto de venta) devuelve 404. Aquí todo lo que no sea un
 # archivo o carpeta real se sirve como index.html y React Router resuelve la ruta.
 <IfModule mod_rewrite.c>
+  Options -MultiViews
   RewriteEngine On
   RewriteBase /
 
+  # ── SEO dinámico ───────────────────────────────────────────────────────────
+  # WhatsApp, Facebook, Instagram y LinkedIn no ejecutan JavaScript: leen el
+  # HTML crudo. Sin esto, todo el catálogo y todo el blog se comparten con el
+  # título y la imagen de la portada.
+  #
+  # seo.php sirve el MISMO index.html de siempre, con los meta tags de esa ruta
+  # ya resueltos desde el ERP. No hay build de por medio: un producto publicado
+  # hace un minuto ya se comparte con su foto y su precio. React arranca encima
+  # igual que antes y el visitante no nota nada.
+  #
+  # Si el ERP no responde, seo.php devuelve el index.html tal cual. La página
+  # nunca se cae por esto: en el peor caso se comparte con la tarjeta genérica.
+
+  RewriteRule ^producto/[\w-]+/?$        /seo.php [L]
+  RewriteRule ^catalogo/?$               /seo.php [L]
+  RewriteRule ^catalogo/[\w-]+/?$        /seo.php [L]
+  RewriteRule ^blog/?$                   /seo.php [L]
+  RewriteRule ^blog/[\w-]+/?$            /seo.php [L]
+
+  # El sitemap también se arma en el momento: un producto nuevo entra sin que
+  # nadie despliegue nada.
+  RewriteRule ^sitemap\.xml$             /sitemap.php [L]
+
+  # ── Fallback ───────────────────────────────────────────────────────────────
   # No tocar peticiones a archivos o carpetas que sí existen (assets, imágenes, etc.)
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d

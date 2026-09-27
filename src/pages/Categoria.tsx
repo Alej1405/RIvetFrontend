@@ -10,6 +10,8 @@ import { VACIOS } from '@/lib/respaldos'
 import { AvisoVacio } from '@/components/Aviso'
 import TransicionPagina from '@/components/TransicionPagina'
 import Seo from '@/components/Seo'
+import Compartir from '@/components/Compartir'
+import { storageUrl } from '@/lib/api'
 
 /** Los productos de una categoría incluyen los de sus hijas. */
 export default function Categoria() {
@@ -47,15 +49,27 @@ export default function Categoria() {
       <Seo
         title={categoria?.meta_titulo ?? categoria?.nombre ?? 'Catálogo'}
         description={categoria?.meta_descripcion ?? categoria?.descripcion ?? undefined}
+        url={categoria ? `/catalogo/${categoria.slug}` : undefined}
+        image={storageUrl(categoria?.banner ?? categoria?.imagen)}
       />
 
       <section className="mx-auto max-w-6xl px-4 py-14 md:px-6 md:py-20">
-        <Link
-          to="/catalogo"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft size={16} /> Catálogo
-        </Link>
+        <div className="flex items-center justify-between gap-4">
+          <Link
+            to="/catalogo"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft size={16} /> Catálogo
+          </Link>
+
+          {categoria && (
+            <Compartir
+              titulo={categoria.nombre}
+              texto={categoria.descripcion ?? undefined}
+              url={`/catalogo/${categoria.slug}`}
+            />
+          )}
+        </div>
 
         <motion.header {...entra(0, reduce)} className="mt-6 max-w-2xl">
           <h1 className="font-heveltica text-4xl font-bold tracking-tight text-foreground md:text-5xl text-balance">

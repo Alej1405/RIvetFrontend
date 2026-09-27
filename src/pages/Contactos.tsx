@@ -57,7 +57,12 @@ export default function Contactos() {
 
   return (
     <TransicionPagina>
-      <Seo title="Contactos" description="Escríbenos sobre maquila, formulación o permisos ARCSA. Píntag vía Tolontag, Quito, Ecuador." />
+      <Seo
+        title="Contactos"
+        description="Escríbenos sobre maquila, formulación o permisos ARCSA. Píntag vía Tolontag, Quito, Ecuador."
+        url="/contactos"
+        noindex
+      />
       <PageHeader eyebrow="Hablemos" title={<>Cuéntanos tu <span className="font-bold text-primary">idea.</span></>}>
         Te asesoramos en maquila, formulación y legalización de tu producto alimentario.
       </PageHeader>

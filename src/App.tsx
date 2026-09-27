@@ -10,6 +10,7 @@ const Catalogo = lazy(() => import('@/pages/Catalogo'))
 const Categoria = lazy(() => import('@/pages/Categoria'))
 const Producto = lazy(() => import('@/pages/Producto'))
 const Blog = lazy(() => import('@/pages/Blog'))
+const Noticia = lazy(() => import('@/pages/Noticia'))
 const PuntosVenta = lazy(() => import('@/pages/PuntosVenta'))
 const Nosotros = lazy(() => import('@/pages/Nosotros'))
 const Servicios = lazy(() => import('@/pages/Servicios'))
@@ -29,6 +30,7 @@ function RutasAnimadas() {
           <Route path="/catalogo/:slug" element={<Categoria />} />
           <Route path="/producto/:slug" element={<Producto />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<Noticia />} />
           <Route path="/puntos-venta" element={<PuntosVenta />} />
           <Route path="/nosotros" element={<Nosotros />} />
           <Route path="/servicios" element={<Servicios />} />

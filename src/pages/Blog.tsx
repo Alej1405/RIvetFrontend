@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
-import { AnimatePresence } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { useAppStore } from '@/stores/useAppStore'
-import PostModal from '@/components/PostModal'
 import TransicionPagina from '@/components/TransicionPagina'
 import Seo from '@/components/Seo'
 import { VACIOS } from '@/lib/respaldos'
@@ -13,8 +12,6 @@ const fecha = (iso: string | null) =>
 export default function Blog() {
   const { datos: posts, cargando, error } = useAppStore((s) => s.posts)
   const fetchPosts = useAppStore((s) => s.fetchPosts)
-  const abrirPost = useAppStore((s) => s.abrirPost)
-  const hayModal = useAppStore((s) => s.postAbierto.cargando || !!s.postAbierto.datos)
 
   useEffect(() => {
     void fetchPosts()
@@ -22,7 +19,11 @@ export default function Blog() {
 
   return (
     <TransicionPagina>
-      <Seo title="Blog" description="Procesos, formulación y regulación alimentaria por Rivet Ecuador." />
+      <Seo
+        title="Blog"
+        description="Procesos, formulación y regulación alimentaria por Rivet Ecuador."
+        url="/blog"
+      />
 
       <section className="mx-auto max-w-5xl px-4 py-14 md:px-6 md:py-24">
         <header className="max-w-2xl">
@@ -48,9 +49,10 @@ export default function Blog() {
           <ul className="mt-12 grid gap-5 sm:grid-cols-2">
             {posts.map((post) => (
               <li key={post.id}>
-                {/* Botón y no enlace: abre un modal, no navega a otra URL. */}
-                <button
-                  onClick={() => void abrirPost(post.slug)}
+                {/* Enlace y no botón: cada noticia tiene su URL, y esa URL es
+                    lo que se comparte y lo que Google indexa. */}
+                <Link
+                  to={`/blog/${post.slug}`}
                   className="group flex h-full w-full flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-colors duration-200 hover:border-primary/50 focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 >
                   {post.imagen && (
@@ -77,14 +79,13 @@ export default function Blog() {
                     )}
                     <span className="mt-4 text-sm font-semibold text-primary">Leer</span>
                   </div>
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
         )}
       </section>
 
-      <AnimatePresence>{hayModal && <PostModal />}</AnimatePresence>
     </TransicionPagina>
   )
 }

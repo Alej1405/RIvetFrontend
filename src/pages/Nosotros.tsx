@@ -21,7 +21,7 @@ export default function Nosotros() {
 
   return (
     <TransicionPagina>
-      <Seo title="Nosotros" description="Rivet Ecuador: empresa de ingeniería alimentaria que impulsa el talento de mujeres emprendedoras. Misión, visión y valores." />
+      <Seo title="Nosotros" description="Rivet Ecuador: empresa de ingeniería alimentaria que impulsa el talento de mujeres emprendedoras. Misión, visión y valores." url="/nosotros" />
       <PageHeader eyebrow="Nuestra identidad" title={about?.titulo?.trim() || ABOUT_RESPALDO.titulo}>
         {about?.descripcion}
       </PageHeader>

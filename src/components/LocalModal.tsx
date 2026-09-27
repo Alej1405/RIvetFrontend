@@ -12,7 +12,7 @@ import type { PuntoVenta } from '@/schemas/cms'
  * así que abre instantáneo. Antes esto era una página propia por local.
  *
  * En móvil entra como hoja desde abajo y en escritorio como diálogo centrado,
- * igual que PostModal.
+ * igual que el resto de modales del sitio.
  */
 export default function LocalModal({ punto, onCerrar }: { punto: PuntoVenta | null; onCerrar: () => void }) {
   const reduce = useReducedMotion()

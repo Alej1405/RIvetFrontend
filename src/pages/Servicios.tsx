@@ -22,7 +22,7 @@ export default function Servicios() {
 
   return (
     <TransicionPagina>
-      <Seo title="Servicios" description="Maquilación de licores, formulación de productos, salsas, bebidas, complementos y permisos ARCSA. Asesoramiento técnico integral." />
+      <Seo title="Servicios" description="Maquilación de licores, formulación de productos, salsas, bebidas, complementos y permisos ARCSA. Asesoramiento técnico integral." url="/servicios" />
       <PageHeader eyebrow="Qué hacemos" title={<>Industrializamos tu <span className="font-bold text-primary">producto alimentario</span>.</>}>
         Nuestra oferta se complementa con asesoramiento técnico integral para garantizar productos competitivos y listos para el mercado.
       </PageHeader>

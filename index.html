@@ -11,12 +11,48 @@
     <link rel="preconnect" href="https://p.typekit.net" crossorigin />
     <link rel="stylesheet" href="https://use.typekit.net/cjy3wka.css" />
 
-    <!-- title, description, canonical, og:* y twitter:* los gestiona react-helmet-async
-         por página (ver components/Seo.tsx). Aquí solo el default por si una ruta no lo fija. -->
+    <!-- Estas etiquetas son el valor por defecto y existen para ser reemplazadas.
+         Dos lectores distintos las usan:
+
+         · El navegador: react-helmet-async las sustituye al montar la página
+           (ver components/Seo.tsx). Sirve para Google, que sí ejecuta JavaScript.
+
+         · WhatsApp, Facebook, Instagram y LinkedIn: NO ejecutan JavaScript. Leen
+           este HTML crudo y se van. Para ellos, scripts/prerender.mjs escribe un
+           archivo por categoría y por producto con estas mismas etiquetas ya
+           sustituidas, y el .htaccess se los entrega.
+
+         Por eso tienen que estar todas escritas aquí aunque se vean genéricas: el
+         prerender las REEMPLAZA, no las inventa, y falla a propósito si falta una. -->
     <title>RIVET Ecuador — Ingeniería Alimentaria</title>
+    <meta
+      name="description"
+      content="Rivet Ecuador: ingeniería alimentaria. Formulamos, producimos y certificamos licores, salsas y productos alimentarios con estándar industrial. Maquila y permisos ARCSA."
+    />
     <meta name="author" content="Rivet Ecuador S.A.S." />
     <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://rivet-ec.com/" />
+
     <meta property="og:locale" content="es_EC" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="RIVET Ecuador" />
+    <meta property="og:title" content="RIVET Ecuador — Ingeniería Alimentaria" />
+    <meta
+      property="og:description"
+      content="Formulamos, producimos y certificamos licores, salsas y productos alimentarios con estándar industrial. Maquila y permisos ARCSA."
+    />
+    <meta property="og:url" content="https://rivet-ec.com/" />
+    <meta property="og:image" content="https://rivet-ec.com/rivet_logo_editable.png" />
+    <meta property="og:image:alt" content="RIVET Ecuador" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="RIVET Ecuador — Ingeniería Alimentaria" />
+    <meta
+      name="twitter:description"
+      content="Formulamos, producimos y certificamos licores, salsas y productos alimentarios con estándar industrial. Maquila y permisos ARCSA."
+    />
+    <meta name="twitter:url" content="https://rivet-ec.com/" />
+    <meta name="twitter:image" content="https://rivet-ec.com/rivet_logo_editable.png" />
   </head>
   <body>
     <div id="root"></div>

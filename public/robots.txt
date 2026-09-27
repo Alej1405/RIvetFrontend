@@ -1,0 +1,17 @@
+# rivet-ec.com
+#
+# Todo el sitio es público e indexable salvo los dos formularios, que no
+# aportan nada a una búsqueda y solo diluyen las páginas que sí venden.
+
+User-agent: *
+Allow: /
+Disallow: /postular
+Disallow: /contactos
+
+# Los dos scripts que arman los meta tags y el sitemap en el momento. Sirven
+# contenido, no son páginas: la URL buena siempre es la limpia (/producto/x),
+# y así lo dice el canonical que ellos mismos escriben.
+Disallow: /seo.php
+Disallow: /sitemap.php
+
+Sitemap: https://rivet-ec.com/sitemap.xml
